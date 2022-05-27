@@ -36,3 +36,8 @@ VEX CUSTOM FILES
 *.bin
 *.elf
 *.map
+
+desktop.ini
+
+*.gdoc
+*.gsheet

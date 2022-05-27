@@ -1,7 +1,7 @@
 #include "vex.h"
 #include "Odometry.cpp"
 #include "MotorSigma.cpp"
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\AuxiliaryFunctions\Telemetry.cpp"
+#include "..\AuxiliaryFunctions\Telemetry.cpp"
 
 //Precision for stopping at a place
 void Destination(double x, double y, double r, double speed) {

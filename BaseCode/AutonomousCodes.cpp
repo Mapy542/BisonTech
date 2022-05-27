@@ -1,8 +1,8 @@
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\AuxiliaryFunctions\BaseLock.cpp"
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\AuxiliaryFunctions\CascadeLift.cpp"
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\X-DriveFunctions\MultiAxisNavigation.cpp"
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\AuxiliaryFunctions\PneumaticPush.cpp"
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\AuxiliaryFunctions\BackBase.cpp"
+#include "AuxiliaryFunctions\BaseLock.cpp"
+#include "AuxiliaryFunctions\CascadeLift.cpp"
+#include "X-DriveFunctions\MultiAxisNavigation.cpp"
+#include "AuxiliaryFunctions\PneumaticPush.cpp"
+#include "AuxiliaryFunctions\BackBase.cpp"
 #include "vex.h"
 
 

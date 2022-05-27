@@ -27,10 +27,7 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-//#include "X-DriveFunctions/MultiAxisNavigation.cpp"
-//#include "AuxiliaryFunctions/CascadeLift.cpp"
-//#include "AuxiliaryFunctions/BaseLock.cpp"
-#include "C:\Users\Eli\My Drive\Code Sync\2022 Codes\CodeBaseFLB\AutonomousStratagies\AutonomousCodes.cpp"
+#include "\..\BaseCode\AutonomousCodes.cpp"
 
 using namespace vex;
 
