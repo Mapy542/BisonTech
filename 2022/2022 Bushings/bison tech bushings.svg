@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="226.51512mm"
+   height="76.58532mm"
+   viewBox="0 0 226.5151 76.58532"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="bison tech bushings.svg">
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect849"
+       is_visible="true"
+       lpeversion="1" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.9899495"
+     inkscape:cx="468.47321"
+     inkscape:cy="75.547539"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g4262"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1528"
+     inkscape:window-height="836"
+     inkscape:window-x="72"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(63.701866,-101.58315)">
+    <g
+       id="g3898-0"
+       transform="translate(-7.1261004,1.5389002)">
+      <g
+         id="g4262"
+         transform="translate(-32.069467,2.0186106e-6)">
+        <g
+           id="g230"
+           transform="translate(-38.187183,0.80180858)">
+          <g
+             transform="translate(-29.93839,-4.401544)"
+             id="g3983-5">
+            <ellipse
+               style="fill:none;stroke:#0000ff;stroke-width:0.19072691;stroke-miterlimit:4;stroke-dasharray:none"
+               id="path851-40-4"
+               cx="53.252007"
+               cy="114.06487"
+               rx="9.804637"
+               ry="9.804635" />
+            <rect
+               id="rect173-13-2"
+               width="3.0454545"
+               height="3.0454545"
+               x="51.729279"
+               y="112.54214"
+               style="fill:none;stroke:#0000ff;stroke-width:0.30454546" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
