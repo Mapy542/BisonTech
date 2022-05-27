@@ -1,6 +1,6 @@
 #include "vex.h"
 #include "Odometry.cpp"
-#include "MotorSigma.cpp"
+#include "MotorDriver.cpp"
 #include "..\AuxiliaryFunctions\Telemetry.cpp"
 
 //Precision for stopping at a place
