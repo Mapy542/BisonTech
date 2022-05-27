@@ -42,9 +42,9 @@ double CurrentXAxis, CurrentYAxis, PreviousTheta, PreviousYValue, PreviousXValue
 int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
 int autonomouscodenumber = 1;
 
-// Autonomous
+// Autonomousv2
 int onauton_autonomous_0() {
-    LeftYellowFirst();
+    SkillsV2();
 return 0;
 }
 
@@ -64,7 +64,7 @@ int ondriver_drivercontrol_0() {
 // Initalization
 int whenStarted1() {
   Gyroscope.startCalibration();
-  Set_Offset(220.0, 230.0);
+  Set_Offset(3355.0, 230.0);
   PreviousTheta = 180;
   PreviousYValue = 0;
   PreviousXValue = 0;

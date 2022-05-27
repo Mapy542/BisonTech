@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+
+VEX CUSTOM FILES
+*.bin
+*.elf
+*.map
