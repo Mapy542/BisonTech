@@ -1,7 +1,5 @@
 #include "vex.h"
 
-//lmao sigma balls
-
 //Combines motor powers over directions for multiaxis movings
 void DriveMotors(double x, double y, double r, double s) {
   if (!(x == 0.0) || (!(y == 0.0) || !(r == 0.0))) {
