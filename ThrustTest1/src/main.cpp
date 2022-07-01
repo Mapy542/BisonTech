@@ -117,3 +117,26 @@ int main() {
 
   whenStarted1();
 }
+
+
+typedef struct{
+int mass = 5; //kg
+double CurrentXAxis = 0;
+double CurrentYAxis = 0;
+double CurrentTheta = 0;
+
+double TargetXAxis = 0;
+double TargetYAxis = 0;
+double TargetTheta = 0;
+
+double CurrentXEncoderValue = 0;
+double CurrentYEncoderValue = 0;
+
+double CurrentXVelocity = 0;
+double CurrentYVelocity = 0;
+double CurrentRVelocit = 0;
+
+double MaxXVelocity = 0;
+double MaxYVelocity = 0;
+double MaxRVelocit = 0;
+}robot;
