@@ -1,14 +1,17 @@
 #include "AuxiliaryFunctions\BaseLock.cpp"
 #include "AuxiliaryFunctions\CascadeLift.cpp"
-#include "KinematicEngine\Engine.cpp"
+//#include "KinematicEngine\Engine.cpp"
 #include "VectorEngine\Engine.cpp"
 #include "AuxiliaryFunctions\PneumaticPush.cpp"
 #include "AuxiliaryFunctions\BackBase.cpp"
 #include "vex.h"
 
-void ThrustTest(){
-
-
+void ThrustTest{
+vex::task::sleep(25);
+  while(true){
+    Brain.Screen.print("%f", Brain.Battery.current());
+    vex::task::sleep(25);
+  }
 }
 
 

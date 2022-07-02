@@ -30,23 +30,45 @@
 #include "\..\BaseCode\AutonomousCodes.cpp"
 
 using namespace vex;
-
 competition Competition;
 
 double lbs_mass = 5; //robot in lbs
 double mass = lbs_mass * 0.453592;
 
-//Odometry
-double CurrentXAxis, CurrentYAxis, PreviousTheta, PreviousYValue, PreviousXValue, globaldelta;
-//Vector Engine
-double CurrentXVelocity, CurrentYVelocity, CurrentRVelocity;
+typedef struct{ //a javalike classlike thingy but just with a bunch of public fields
+int mass; //kg
+double CurrentXAxis;
+double CurrentYAxis;
+double CurrentTheta;
 
+double TargetXAxis;
+double TargetYAxis;
+double TargetTheta;
+
+double CurrentXEncoderValue;
+double CurrentYEncoderValue;
+double CurrentThetaValue;
+
+double CurrentXVelocity;
+double CurrentYVelocity;
+double CurrentRVelocit;
+
+double MaxXVelocity;
+double MaxYVelocity;
+double MaxRVelocitiy;
+}Robot_Telemetry;
+
+Robot_Telemetry ricky;
+
+ricky.MaxRVelocity = 0;
 //old
 int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
 
 // Autonomousv2
 int onauton_autonomous_0() {
-    ThrustTest();
+  vex::task thrust_vector_calc(Engine);
+  vex::task odometry(Odometry_Daemon);
+  vex::task autonoma_sequence(ThrustTest);
 return 0;
 }
 
@@ -63,8 +85,7 @@ int whenStarted1() {
   Gyroscope.startCalibration();
   Set_Offset(3355.0, 230.0);
   PreviousTheta = 180;
-  PreviousYValue = 0;
-  PreviousXValue = 0;
+
   LockDesiredState = -99;
   FL.setStopping(brake);
   RL.setStopping(brake);
@@ -119,24 +140,3 @@ int main() {
 }
 
 
-typedef struct{
-int mass = 5; //kg
-double CurrentXAxis = 0;
-double CurrentYAxis = 0;
-double CurrentTheta = 0;
-
-double TargetXAxis = 0;
-double TargetYAxis = 0;
-double TargetTheta = 0;
-
-double CurrentXEncoderValue = 0;
-double CurrentYEncoderValue = 0;
-
-double CurrentXVelocity = 0;
-double CurrentYVelocity = 0;
-double CurrentRVelocit = 0;
-
-double MaxXVelocity = 0;
-double MaxYVelocity = 0;
-double MaxRVelocit = 0;
-}robot;

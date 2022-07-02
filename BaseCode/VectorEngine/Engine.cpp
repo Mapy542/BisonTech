@@ -3,13 +3,13 @@
 #include "MotorDriver.cpp"
 #include "..\AuxiliaryFunctions\Telemetry.cpp"
 
-//Straight line to point with given ending velocity
-void HaltVector(double x, double y, double r, double v){
-  extern double CurrentXAxis;
-  extern double CurrentYAxis;
-  extern double CurrentXVelocity;
+void Engine{
+  extern struct robot; //import-ish the global robot data
 
-while(fabs(CurrentXAxis - x) < 10 && fabs(CurrentYAxis - y) < 10 && fabs(Gyroscope.heading(degrees) - r) < 3 && fabs(Current))
+while(fabs(CurrentXAxis - x) < 10 && fabs(CurrentYAxis - y) < 10 && fabs(Gyroscope.heading(degrees) - r) < 3 && fabs(Current)){
+
+vex::task::sleep(25); //allow other tasks to operate updates 40hz ideally
+}
 }
 
 

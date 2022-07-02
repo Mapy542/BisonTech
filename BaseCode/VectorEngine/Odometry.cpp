@@ -1,10 +1,32 @@
 #include "vex.h"
 
+void Odometry_Daemon{
+  extern Robot_Telemetry ricky;
+
+  while(true)
+  {
+    // Update odometry
+    struct encoderoutput = EncoderIntegral(ricky);
+    vex::task::sleep(10);
+  }
+}
+
+void EncoderIntegral(struct robo){
+
+
+
+  typedef struct{
+    double x = a;
+    double y = a;
+  }point;
+  return point;
+}
+
 //Get Odometry from encoders and gyroscope
 //POLL AS FAST AS POSSIBLE
 /* This is the function that polls the encoders and the gyroscope to get the absolute position of the
 robot. */
-void Poll_Absolute_Cords() {
+void asdPoll_Absolute_Cords() {
   double DeltaTheta;
   double EncoderDeltaY;
   double EncoderDeltaX;
