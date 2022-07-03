@@ -35,32 +35,9 @@ competition Competition;
 double lbs_mass = 5; //robot in lbs
 double mass = lbs_mass * 0.453592;
 
-typedef struct{ //a javalike classlike thingy but just with a bunch of public fields
-int mass; //kg
-double CurrentXAxis;
-double CurrentYAxis;
-double CurrentTheta;
+Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
+//seemed efficient i guess
 
-double TargetXAxis;
-double TargetYAxis;
-double TargetTheta;
-
-double CurrentXEncoderValue;
-double CurrentYEncoderValue;
-double CurrentThetaValue;
-
-double CurrentXVelocity;
-double CurrentYVelocity;
-double CurrentRVelocit;
-
-double MaxXVelocity;
-double MaxYVelocity;
-double MaxRVelocitiy;
-}Robot_Telemetry;
-
-Robot_Telemetry ricky;
-
-ricky.MaxRVelocity = 0;
 //old
 int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
 
@@ -69,6 +46,8 @@ int onauton_autonomous_0() {
   vex::task thrust_vector_calc(Engine);
   vex::task odometry(Odometry_Daemon);
   vex::task autonoma_sequence(ThrustTest);
+
+  ricky.MaxRVelocity = 0;
 return 0;
 }
 
