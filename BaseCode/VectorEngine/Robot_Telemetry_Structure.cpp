@@ -1,6 +1,6 @@
 typedef struct{ //a javalike classlike thingy but just with a bunch of public fields
 
-int mass; //kg
+int TunedMass; //Used for Odometry and kinematics
 
 double CurrentXAxis; //From Odometry systems
 double CurrentYAxis;

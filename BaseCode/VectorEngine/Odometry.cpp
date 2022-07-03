@@ -45,14 +45,40 @@ void EncoderIntegral(){ //Update odometry from encoders by integrating encoder v
   }
 
   //Integrate encoder values to get odometry
-  double XChange = ((EncoderDeltaY * sin(Gyroscope.heading(degrees) * M_PI / 180)) * -1.0 + (EncoderDeltaX - DeltaTheta * -1.60520825) * cos(Gyroscope.heading(degrees) * M_PI / 180)) * 0.620639082;
-  double YChange = ((EncoderDeltaY * cos(Gyroscope.heading(degrees) * M_PI / 180) + (EncoderDeltaX - DeltaTheta * -1.60520825) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * 0.70639082) * -1.0;
+  double XChange = ((EncoderDeltaY * sin(Gyroscope.heading(degrees) * M_PI / 180)) * -1.0 + (EncoderDeltaX - DeltaTheta * -1.60520825) * cos(Gyroscope.heading(degrees) * M_PI / 180)) * 0.6223678817;
+  double YChange = ((EncoderDeltaY * cos(Gyroscope.heading(degrees) * M_PI / 180) + (EncoderDeltaX - DeltaTheta * -1.60520825) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * 0.6223678817) * -1.0;
   ricky.CurrentXAxis += XChange;
   ricky.CurrentYAxis += YChange;
 
   //Calculate current velocitys
-  ricky.CurrentXVelocity = XChange / (double)DeltaTime / 1000; //mm/s
-  ricky.CurrentYVelocity = YChange / (double)DeltaTime / 1000; //mm/s
+
+  //integration method:
+  double XVelDeltaTime= XChange / (double)DeltaTime / 1000; //mm/s
+  double YVelDeltaTime = YChange / (double)DeltaTime / 1000; //mm/s
+  double RVelDeltaTime = DeltaTheta / (double)DeltaTime / 1000; //deg/s
+
+  //hardware dps method:
+  double XVelDPS = ((y.velocity(dps) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * -1.0 + (x.velocity(dps)) * cos(Gyroscope.heading(degrees) * M_PI / 180)) * 0.6223678817;
+  double YVelDPS = ((y.velocity(dps) * cos(Gyroscope.heading(degrees) * M_PI / 180) + (x.velocity(dps)) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * 0.6223678817) * -1.0;
+  double RVelDPS = Gyroscope.gyroRate(xaxis, dps);
+
+  //motors telemetry method:  (may have issues if the motors are slipping)
+  double forwardvelocity = (FL.velocity(dps) + FR.velocity(dps) + RL.velocity(dps) + RR.velocity(dps)) / 4;
+  double sidewardvelocity = (-1 * FL.velocity(dps) + FR.velocity(dps) + RL.velocity(dps) + -1 * RR.velocity(dps)) / 4;
+  
+        FL.setVelocity((((y * s + r * s) - x * s) + 0.0), percent);
+    FL.spin(forward);
+    RL.setVelocity((((y * s + r * s) + x * s) + 0.0), percent);
+    RL.spin(forward);
+    FR.setVelocity((((y * s - r * s) + x * s) - 0.0), percent);
+    FR.spin(forward);
+    RR.setVelocity((((y * s - r * s) - x * s) - 0.0), percent);
+    RR.spin(forward);
+
+  //Calculate current accelerations via double integration
+  double XAclDeltaTime = ricky.CurrentXVelocity / (double)DeltaTime / 1000; //mm/s^2
+  double YAclDeltaTime = ricky.CurrentYVelocity / (double)DeltaTime / 1000; //mm/s^2
+  double RAclDeltaTime = ricky.CurrentRVelocity / (double)DeltaTime / 1000; //deg/s^2
 }
 
 
