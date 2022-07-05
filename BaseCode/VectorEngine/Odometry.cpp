@@ -2,13 +2,14 @@
 #include "Robot_Telemetry_Structure.cpp"
 
 void Odometry_Daemon{
-  extern Robot_Telemetry ricky;
-
+  //extern Robot_Telemetry ricky;
   while(true)
   {
     // Update odometry
-    EncoderIntegral();
-    vex::task::sleep(10);
+    EncoderIntegral(); //Does 90% of the work
+    //LidarUpdate(); //Double checks absolute distances to keep integral in check when possible
+    PrintTelemetry(ricky);
+    vex::task::sleep(10000);
   }
 }
 
@@ -53,32 +54,59 @@ void EncoderIntegral(){ //Update odometry from encoders by integrating encoder v
   //Calculate current velocitys
 
   //integration method:
+  //v = x/t
   double XVelDeltaTime= XChange / (double)DeltaTime / 1000; //mm/s
   double YVelDeltaTime = YChange / (double)DeltaTime / 1000; //mm/s
   double RVelDeltaTime = DeltaTheta / (double)DeltaTime / 1000; //deg/s
 
   //hardware dps method:
+  //v = v
   double XVelDPS = ((y.velocity(dps) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * -1.0 + (x.velocity(dps)) * cos(Gyroscope.heading(degrees) * M_PI / 180)) * 0.6223678817;
   double YVelDPS = ((y.velocity(dps) * cos(Gyroscope.heading(degrees) * M_PI / 180) + (x.velocity(dps)) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * 0.6223678817) * -1.0;
   double RVelDPS = Gyroscope.gyroRate(xaxis, dps);
 
   //motors telemetry method:  (may have issues if the motors are slipping)
-  double forwardvelocity = (FL.velocity(dps) + FR.velocity(dps) + RL.velocity(dps) + RR.velocity(dps)) / 4;
-  double sidewardvelocity = (-1 * FL.velocity(dps) + FR.velocity(dps) + RL.velocity(dps) + -1 * RR.velocity(dps)) / 4;
-  
-        FL.setVelocity((((y * s + r * s) - x * s) + 0.0), percent);
-    FL.spin(forward);
-    RL.setVelocity((((y * s + r * s) + x * s) + 0.0), percent);
-    RL.spin(forward);
-    FR.setVelocity((((y * s - r * s) + x * s) - 0.0), percent);
-    FR.spin(forward);
-    RR.setVelocity((((y * s - r * s) - x * s) - 0.0), percent);
-    RR.spin(forward);
+  //v = v
+  double forwardvelocity = (FL.velocity(dps) + FR.velocity(dps) + RL.velocity(dps) + RR.velocity(dps)) / 4 * 0.8890969738; //mm/s
+  double sidewardvelocity = (-1 * FL.velocity(dps) + FR.velocity(dps) + RL.velocity(dps) - RR.velocity(dps)) / 4 * 0.8890969738; //mm/s
+  double rotationalvelocity = (FL.velocity(dps) + FR.velocity(dps) - RL.velocity(dps) - RR.velocity(dps)) / 4; //deg/s
+
+  //Average possible velocitys (less emphasis on motors)
+  ricky.CurrentXVelocity = (XVelDeltaTime + XVelDPS + sidewardvelocity/2) / 2.5; //mm/s
+  ricky.CurrentYVelocity = (YVelDeltaTime + YVelDPS + forwardvelocity/2) / 2.5; //mm/s
+  ricky.CurrentRVelocity = (RVelDeltaTime + RVelDPS + rotationalvelocity/2) / 2.5; //deg/s
 
   //Calculate current accelerations via double integration
+  //a = v/t
   double XAclDeltaTime = ricky.CurrentXVelocity / (double)DeltaTime / 1000; //mm/s^2
   double YAclDeltaTime = ricky.CurrentYVelocity / (double)DeltaTime / 1000; //mm/s^2
   double RAclDeltaTime = ricky.CurrentRVelocity / (double)DeltaTime / 1000; //deg/s^2
+
+  //hardware dps method:
+  //a = v/t
+  double XAclhardware = sidewardvelocity / (double)DeltaTime / 1000; //mm/s^2
+  double YAclhardware = forwardvelocity / (double)DeltaTime / 1000; //mm/s^2
+  double RAclhardware = rotationalvelocity / (double)DeltaTime / 1000; //deg/s^2 
+
+  //Average possible accelerations (less emphasis on motors)
+  ricky.CurrentXAcceleration = (XAclDeltaTime + XAclhardware / 2) / 1.5; //mm/s^2
+  ricky.CurrentYAcceleration = (YAclDeltaTime + YAclhardware / 2) / 1.5; //mm/s^2
+  ricky.CurrentRAcceleration = (RAclDeltaTime + RAclhardware / 2) / 1.5; //deg/s^2 
+
+  //calculate tuning mass
+  //f = ma so m = f/a
+
+  //calculate current motor force going forwards
+  //t = f/d
+  if(ricky.CurrentYVelocity > 1){
+  double t = (FL.torque(Nm) + FR.torque(Nm) + RL.torque(Nm) + RR.torque(Nm)) / 4; //Nm
+  double f = t / 0.0508; //N  50.8 = wheel radius in mm
+
+  double m = f / ricky.CurrentYAcceleration; //kg
+  
+  ricky.TunedMass = m;
+  }
+
 }
 
 
