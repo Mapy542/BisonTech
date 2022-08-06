@@ -1,6 +1,7 @@
 #include "vex.h"
 
-const char *printToConsole_numberFormat() {
+const char *printToConsole_numberFormat()
+{
   // look at the current precision setting to find the format string
   // switch(Console_precision){
   // case 0:  return "%.0f"; // 0 decimal places (1)
@@ -12,7 +13,8 @@ const char *printToConsole_numberFormat() {
   //}
 }
 
-void Print_XYR() {
+void Print_XYR()
+{
   extern double CurrentXAxis;
   extern double CurrentYAxis;
 
