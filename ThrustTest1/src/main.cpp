@@ -33,27 +33,27 @@ using namespace vex;
 
 competition Competition;
 
-int Brain_precision = 0, Console_precision = 0, Controller1_precision = 0;
+double lbs_mass = 5; //robot in lbs
+double mass = lbs_mass * 0.453592;
 
+//Odometry
 double CurrentXAxis, CurrentYAxis, PreviousTheta, PreviousYValue, PreviousXValue, globaldelta;
+//Vector Engine
+double CurrentXVelocity, CurrentYVelocity, CurrentRVelocity;
+
+//old
 int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
-int autonomouscodenumber = 1;
 
 // Autonomousv2
 int onauton_autonomous_0() {
-    SkillsV2();
+    ThrustTest();
 return 0;
 }
 
 // Driver Control
 int ondriver_drivercontrol_0() {
   while (true) {
-    ManualMotors();
-    ManualLift();
-    ManualLockToggle();
-    ManualPiston();
-    ManualBack();
-    ManualBackGripper();
+    ThrustTest();
     wait(5, msec);
   }
 }
@@ -65,7 +65,6 @@ int whenStarted1() {
   PreviousTheta = 180;
   PreviousYValue = 0;
   PreviousXValue = 0;
-  Console_precision = -1;
   LockDesiredState = -99;
   FL.setStopping(brake);
   RL.setStopping(brake);

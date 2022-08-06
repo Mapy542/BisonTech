@@ -1,9 +1,17 @@
 #include "AuxiliaryFunctions\BaseLock.cpp"
 #include "AuxiliaryFunctions\CascadeLift.cpp"
-#include "KenematicEngine\Engine.cpp"
+#include "KinematicEngine\Engine.cpp"
+#include "VectorEngine\Engine.cpp"
 #include "AuxiliaryFunctions\PneumaticPush.cpp"
 #include "AuxiliaryFunctions\BackBase.cpp"
 #include "vex.h"
+
+void ThrustTest(){
+
+
+}
+
+
 
 
 void SkillsRun() {
