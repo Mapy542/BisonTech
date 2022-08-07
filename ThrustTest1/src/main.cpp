@@ -43,9 +43,9 @@ int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, Rig
 
 // Autonomousv2
 int onauton_autonomous_0() {
-  vex::task thrust_vector_calc(Engine);
-  vex::task odometry(Odometry_Daemon);
-  vex::task autonoma_sequence(ThrustTest);
+  //vex::task thrust_vector_calc(Engine);
+  //vex::task odometry(Odometry_Daemon);
+  //vex::task autonoma_sequence(ThrustTest);
   ricky.MaxRVelocity = 0;
 return 0;
 }
@@ -61,8 +61,8 @@ int ondriver_drivercontrol_0() {
 // Initalization
 int whenStarted1() {
   Gyroscope.startCalibration();
-  Set_Offset(3355.0, 230.0);
-  PreviousTheta = 180;
+  //Set_Offset(3355.0, 230.0);
+  //PreviousTheta = 180;
 
   LockDesiredState = -99;
   FL.setStopping(brake);
