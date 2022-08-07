@@ -118,39 +118,26 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
       (YAclDeltaTime + YAclhardware / 2) / 1.5; // mm/s^2
   ricky.CurrentRAcceleration =
       (RAclDeltaTime + RAclhardware / 2) / 1.5; // deg/s^2
-
-  // calculate tuning mass
-  // f = ma so m = f/a
-
-  // calculate current motor force going forwards
-  // t = f/d
-  if (ricky.CurrentYVelocity > 1) {
-    double t = (FL.torque(Nm) + FR.torque(Nm) + RL.torque(Nm) + RR.torque(Nm)) /
-               4;          // Nm
-    double f = t / 0.0508; // N  50.8 = wheel radius in mm
-
-    double m = f / ricky.CurrentYAcceleration; // kg
-
-    ricky.TunedMass = m;
-  }
 };
 
-// Easy calculate vector value to coord. Reports positive and negative for
-// direction. Solves wrap around.
-/* This function returns the difference between the gyroscope and the given
-value. If the difference is greater than 180 degrees, it will return the
-difference minus 360 degrees. */
-float FromGyro(double r) {
-  double DegreeDiff = 0;
-  if (fabs(Gyroscope.heading(degrees) - r) > 180.0) {
-    DegreeDiff = ((Gyroscope.heading(degrees) - r) - 359.0) * -1.0;
-  } else {
-    DegreeDiff = Gyroscope.heading(degrees) - r;
-  }
-  return DegreeDiff;
-};
+// Precondition: function takes two rotations as arguments
+// Postcondition: returns the difference between the two rotations while
+// handling wrap around 360 degrees. Should return the shortest distance between
+// the two rotations with sign denoting the direction. + = ccw, - = cw
+double RadialDifference(double deg1, double deg2){};
 
-void Odometry_Daemon() {
+// Precondition: Robot acceleration is assumed to be correct and uptodate
+// Postcondition: Returns best guess of the robots mass based on the current
+// acceleration and torque on the motors
+double MassTune(){};
+
+// Precondition: function is given a new value for a parameter
+// Postcondition: if the new value is within a 20% deviation from the current
+// value, the average of the two values is returned //if the current value is 0,
+// the new value is returned
+double Averager(double newval, double currentval){};
+
+void Odometry_Daemon() { // Main odometry service loop
   // extern Robot_Telemetry ricky;
   while (true) {
     // Update odometry

@@ -1,8 +1,11 @@
 # BisonTech
+
 Code repository for Bison Tech Robotics
 
-Working On:
-Thrust Vectoring
+## Installation Requirements
 
-Tasks:
-None
+Install VexCode Pro v5
+VsCode Extensions:
+PROS by Purdue
+Draw.io Integration by Henning Dieterichs
+Prettier Code by Prettier

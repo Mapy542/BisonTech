@@ -6,7 +6,8 @@ void Extend_Back() { BackMotor.spinToPosition(200.0, degrees, false); }
 /* This function spins the base lock to a position of 0 degrees. */
 void Retract_Back() { BackMotor.spinToPosition(0.0, degrees, false); }
 
-/* This function is used to toggle the lock between the locked and unlocked states. */
+/* This function is used to toggle the lock between the locked and unlocked
+ * states. */
 void ManualBack() {
   extern int BackDesiredState;
 
@@ -22,9 +23,9 @@ void ManualBack() {
   }
 }
 
-void CloseBack() { DigitalOutG.set(true);}
+void CloseBack() { DigitalOutG.set(true); }
 
-void OpenBack() { DigitalOutG.set(false);}
+void OpenBack() { DigitalOutG.set(false); }
 
 void ManualBackGripper() {
   extern int BackGripperDesiredState;
