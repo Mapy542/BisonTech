@@ -8,6 +8,12 @@
 #include "vex.h"
 
 // JENA CODE HERE
+while (Gyroscope.isCalibrating()) {
+    task::sleep(50);
+  }
+  Gyroscope.setHeading(180.0, degrees);
+Destination(0.0, 200.0, 180.0, 0.6);
+Destination (200.0, 200.0, 180.0, 0.6 );
 
 // BEN CODE HERE
 
