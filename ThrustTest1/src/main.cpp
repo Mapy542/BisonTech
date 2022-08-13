@@ -27,15 +27,12 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-#include "\..\BaseCode\AutonomousCodes.cpp"
+#include "C:\Users\Eli\Documents\BisonTech\BaseCode\AutonomousCodes.cpp"
 
 using namespace vex;
 competition Competition;
 
-double lbs_mass = 5; //robot in lbs
-double mass = lbs_mass * 0.453592;
-
-Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
+//Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
 //seemed efficient i guess
 
 //old
@@ -46,7 +43,6 @@ int onauton_autonomous_0() {
   //vex::task thrust_vector_calc(Engine);
   //vex::task odometry(Odometry_Daemon);
   //vex::task autonoma_sequence(ThrustTest);
-  ricky.MaxRVelocity = 0;
 return 0;
 }
 
