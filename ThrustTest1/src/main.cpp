@@ -35,8 +35,10 @@ competition Competition;
 //Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
 //seemed efficient i guess
 
-//old
-int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
+double CurrentXAxis, CurrentYAxis, PreviousTheta, PreviousYValue, PreviousXValue, globaldelta;
+int LockDesiredState, BackDesiredState, BackGripperDesiredState;
+int autonomouscodenumber = 1;
+int LeftInital, RightInital, BaseLockOffset;
 
 // Autonomousv2
 int onauton_autonomous_0() {
