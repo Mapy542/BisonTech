@@ -41,3 +41,6 @@ desktop.ini
 
 *.gdoc
 *.gsheet
+
+#VSCODE
+.cache/*
