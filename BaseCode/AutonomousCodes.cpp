@@ -9,23 +9,24 @@
 
 // JENA CODE HERE
 void ThrustTest() {
-while (Gyroscope.isCalibrating()) {
+  while (Gyroscope.isCalibrating()) {
     task::sleep(50);
   }
   Gyroscope.setHeading(180.0, degrees);
-Destination(0.0, 200.0, 180.0, 0.6);
-Destination (200.0, 200.0, 180.0, 0.6 );
+  Destination(0.0, 200.0, 180.0, 0.6);
+  Destination(200.0, 200.0, 180.0, 0.6);
 };
 
 // BEN CODE HERE
 
-void ThrustTest() {
+/*void ThrustTest() {
   vex::task::sleep(25);
   while (true) {
     Brain.Screen.print("%f", Brain.Battery.current());
     vex::task::sleep(25);
   }
 };
+*/
 /*
 void SkillsRun() {
   while (Gyroscope.isCalibrating()) {

@@ -45,6 +45,7 @@ int onauton_autonomous_0() {
   //vex::task thrust_vector_calc(Engine);
   //vex::task odometry(Odometry_Daemon);
   //vex::task autonoma_sequence(ThrustTest);
+  ThrustTest();
 return 0;
 }
 
