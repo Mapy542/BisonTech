@@ -12,6 +12,11 @@ const char *printToConsole_numberFormat() {
   //}
 }
 
+int Averager(int a, int b) {
+  int c = (a + b) / 2;
+  return c;
+};
+
 void Print_XYR() {
   extern double CurrentXAxis;
   extern double CurrentYAxis;
