@@ -37,6 +37,7 @@ typedef struct { // a javalike classlike thingy but just with a bunch of public
 
   long CurrentTime; // Used for odometry integration
 
+  double OverRideR;
 } Robot_Telemetry;
 
 void PrintTelemetry(Robot_Telemetry robo) {

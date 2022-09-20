@@ -60,3 +60,22 @@ void ManualMotors() {
     RR.stop();
   }
 }
+
+// headless manual control
+void HeadlessManualControl() {
+  extern bool OverrideManualR;
+  extern Robot_Telemetry ricky;
+
+  double X_Speed =
+      Controller1.Axis3.position() * sin(Gyroscope.heading(degrees)) +
+      Controller1.Axis4.position() * cos(Gyroscope.heading(degrees));
+  double Y_Speed =
+      Controller1.Axis3.position() * cos(Gyroscope.heading(degrees)) +
+      Controller1.Axis4.position() * sin(Gyroscope.heading(degrees));
+  if (!OverrideManualR) {
+    double R - Speed = Controller1.Axis1.position();
+  } else {
+    double R - Speed = ricky.OverRideR;
+  }
+  DriveMotors(X_Speed, Y_Speed, R - Speed, 1);
+}
