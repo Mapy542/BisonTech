@@ -73,9 +73,9 @@ void HeadlessManualControl() {
       Controller1.Axis3.position() * cos(Gyroscope.heading(degrees)) +
       Controller1.Axis4.position() * sin(Gyroscope.heading(degrees));
   if (!OverrideManualR) {
-    double R - Speed = Controller1.Axis1.position();
+    double R_Speed = Controller1.Axis1.position();
   } else {
-    double R - Speed = ricky.OverRideR;
+    double R_Speed = ricky.OverRideR;
   }
-  DriveMotors(X_Speed, Y_Speed, R - Speed, 1);
+  DriveMotors(X_Speed, Y_Speed, R_Speed, 1);
 }
