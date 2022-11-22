@@ -1,3 +1,155 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         19              
+// RL                   motor         20              
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      18              
+// y                    encoder       A, B            
+// x                    encoder       C, D            
+// LiftLeft             motor         7               
+// LiftRight            motor         6               
+// BaseLock             motor         17              
+// DigitalOutH          digital_out   H               
+// BackMotor            motor         16              
+// DigitalOutG          digital_out   G               
+// Vision               vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -27,7 +179,7 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-#include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
+#include "C:\Users\6503\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 
 using namespace vex;
 competition Competition;

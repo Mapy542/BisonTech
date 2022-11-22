@@ -9,10 +9,10 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller1 = controller(primary);
-motor FL = motor(PORT19, ratio18_1, false);
-motor RL = motor(PORT20, ratio18_1, false);
-motor FR = motor(PORT9, ratio18_1, true);
-motor RR = motor(PORT10, ratio18_1, true);
+motor FL = motor(PORT19, ratio6_1, false);
+motor RL = motor(PORT20, ratio6_1, false);
+motor FR = motor(PORT9, ratio6_1, true);
+motor RR = motor(PORT10, ratio6_1, true);
 inertial Gyroscope = inertial(PORT18);
 encoder y = encoder(Brain.ThreeWirePort.A);
 encoder x = encoder(Brain.ThreeWirePort.C);
