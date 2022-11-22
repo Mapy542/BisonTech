@@ -2,7 +2,7 @@
 #include "AuxiliaryFunctions\BaseLock.cpp"
 #include "AuxiliaryFunctions\CascadeLift.cpp"
 #include "AuxiliaryFunctions\PneumaticPush.cpp"
-#include "KinematicEngine\Engine.cpp"
+#include "VectorEngine\Engine.cpp"
 
 //#include "VectorEngine\Engine.cpp"
 #include "vex.h"

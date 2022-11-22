@@ -40,7 +40,7 @@ typedef struct { // a javalike classlike thingy but just with a bunch of public
   double OverRideR;
 } Robot_Telemetry;
 
-void PrintTelemetry(Robot_Telemetry robo) {
+/*void PrintTelemetry(Robot_Telemetry robo) {
   printf("\n");
   printf("%.6f", "CurrentXAxis" + < (robo.CurrentXAxis) + "\n");
-}
+}*/

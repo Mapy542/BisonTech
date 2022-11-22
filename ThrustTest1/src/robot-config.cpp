@@ -22,6 +22,9 @@ motor BaseLock = motor(PORT17, ratio18_1, true);
 digital_out DigitalOutH = digital_out(Brain.ThreeWirePort.H);
 motor BackMotor = motor(PORT16, ratio36_1, false);
 digital_out DigitalOutG = digital_out(Brain.ThreeWirePort.G);
+/*vex-vision-config:begin*/
+vision Vision = vision (PORT1, 50);
+/*vex-vision-config:end*/
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

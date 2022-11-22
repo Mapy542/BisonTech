@@ -61,21 +61,44 @@ void ManualMotors() {
   }
 }
 
-// headless manual control
-void HeadlessManualControl() {
-  extern bool OverrideManualR;
-  extern Robot_Telemetry ricky;
+// post condition: return the result of the log function in desmos where x is
+// the joystick value note: log only works with positive values check if the
+// value is positive or negative and use the first or second log function
+int JoystickLog(int joystickvalue) {
+  int output = 0;
+  if (joystickvalue > 0) {
+    output = log(joystickvalue + 1) * 50;
+  } else if (joystickvalue < 0) {
+    output = log(-1 * joystickvalue + 1) * -50;
+  }
+  return output;
+}
 
-  double X_Speed =
-      Controller1.Axis3.position() * sin(Gyroscope.heading(degrees)) +
-      Controller1.Axis4.position() * cos(Gyroscope.heading(degrees));
-  double Y_Speed =
-      Controller1.Axis3.position() * cos(Gyroscope.heading(degrees)) +
-      Controller1.Axis4.position() * sin(Gyroscope.heading(degrees));
+// headless manual control
+void HeadlessManualDriveTrainControl() {
+  extern bool OverrideManualR;
+  // extern Robot_Telemetry ricky;
+
+  double X_Speed = JoystickLog(Controller1.Axis3.position()) *
+                       sin(Gyroscope.heading(degrees)) +
+                   JoystickLog(Controller1.Axis4.position()) *
+                       cos(Gyroscope.heading(degrees));
+  double Y_Speed = JoystickLog(Controller1.Axis3.position()) *
+                       cos(Gyroscope.heading(degrees)) +
+                   JoystickLog(Controller1.Axis4.position()) *
+                       sin(Gyroscope.heading(degrees));
+  double R_Speed;
   if (!OverrideManualR) {
-    double R_Speed = Controller1.Axis1.position();
+    R_Speed = Controller1.Axis1.position();
   } else {
-    double R_Speed = ricky.OverRideR;
+    R_Speed = 0; // ricky.OverRideR;
   }
   DriveMotors(X_Speed, Y_Speed, R_Speed, 1);
 }
+
+// post condition: return the result of the x^2.2 function in desmos where x is
+// the joystick value
+/*void JoystickCubic(int joystickvalue) {
+  int joystick = joystickvalue ^ 2.2 / 200;
+  return joystick;
+}*/

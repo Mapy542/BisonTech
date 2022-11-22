@@ -27,7 +27,7 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-#include "C:\Users\Eli\Documents\BisonTech\BaseCode\AutonomousCodes.cpp"
+#include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 
 using namespace vex;
 competition Competition;
@@ -37,6 +37,10 @@ competition Competition;
 
 //old
 int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
+
+
+bool OverrideManualR;
+int R_Override_Value = 0;
 
 // Autonomousv2
 int onauton_autonomous_0() {
@@ -49,7 +53,7 @@ return 0;
 // Driver Control
 int ondriver_drivercontrol_0() {
   while (true) {
-    ThrustTest();
+    HeadlessManualDriveTrainControl();
     wait(5, msec);
   }
 }
