@@ -1,6 +1,6 @@
 #include "..\AuxiliaryFunctions\Telemetry.cpp"
 #include "MotorDriver.cpp"
-//#include "Odometry.cpp"
+#include "Odometry.cpp"
 #include "vex.h"
 
 void Engine() {

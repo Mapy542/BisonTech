@@ -1,6 +1,6 @@
 #include "Robot_Telemetry_Structure.cpp"
 #include "vex.h"
-
+/*
 void EncoderIntegral() { // Update odometry from encoders by integrating encoder
                          // values
   extern Robot_Telemetry ricky; // Forces update every time
@@ -31,7 +31,7 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
   }
   if (-300.0 > DeltaTheta) {
     DeltaTheta = -0.5;
-  }*/
+  }
 
   if (fabs(DeltaTheta) > 300) { // If heading wraps around 360 degrees, then
                                 // guess theta based on current speed
@@ -148,3 +148,5 @@ void Odometry_Daemon() { // Main odometry service loop
     vex::task::sleep(10);
   }
 };
+
+*/
