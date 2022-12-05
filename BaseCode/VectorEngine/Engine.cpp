@@ -3,23 +3,130 @@
 #include "Odometry.cpp"
 #include "vex.h"
 
-void Engine() {
-  // extern struct robot; // import-ish the global robot data
+// Radial Distance calculator. takes two degrees and returns the distance
+// between them will wrap around 360 degrees if needed
+void RadialDistance(double Theta1, double Theta2) {
+  double distance = Theta1 - Theta2;
+  if (distance > 180) {
+    distance -= 360;
+  } else if (distance < -180) {
+    distance += 360;
+  }
 
-  // while (fabs(CurrentXAxis - x) < 10 && fabs(CurrentYAxis - y) < 10 &&
-  // fabs(Gyroscope.heading(degrees) - r) < 3 && fabs(Current))
-  //{
+  return distance;
+}
 
-  vex::task::sleep(25); // allow other tasks to operate updates 40hz ideally
-  //}
+// RadialDistance given theta1 is the gyro reading
+void FromGyro(double theta1) {
+  return RadialDistance(Gyroscope.heading(degrees), theta1);
+}
+
+void MotorVectorEngine() { // main calculation loop
+  extern Robot_Telemetry ricky;
+
+  if ((fabs(ricky.TargetXAxis - ricky.ricky.CurrentXAxis) >
+       ricky.DistanceTolerance) ||
+      (fabs(ricky.TargetYAxis - ricky.ricky.CurrentYAxis) >
+       ricky.DistanceTolerance) ||
+      (fabs(ricky.TargetTheta - ricky.CurrentThetaValue) >
+       ricky.AngleTolerance)) {
+
+    double DriveXScale;
+    double DriveYScale;
+    double DriveRScale;
+
+    ricky.Engine_Busy =
+        true; // Set busy flag to true so autonomous code can wait
+
+    TangentialDist =
+        3.0 * (FromGyro(ricky.TargetTheta) *
+               6.2831); // find tangential distance to linearize rotation to the
+                        // same scale as ricky.TargetX and ricky.TargetY. Then
+                        // increase the scale by 3 to make it more sensitive to
+                        // rotation.
+
+    if (ricky.TravelStyle == 0) { // Calculate Scale for direct line
+      if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((TangentialDist)) &&
+          fabs((ricky.TargetY - ricky.CurrentYAxis)) <
+              fabs((TangentialDist))) { // if tangential distance is more than x
+                                        // and y distance
+
+        DriveYScale =
+            100.0 * ((ricky.TargetY - ricky.CurrentYAxis) /
+                     fabs((TangentialDist))); // scale y to y over tangential
+        DriveXScale =
+            100.0 * ((ricky.TargetX - ricky.CurrentXAxis) /
+                     fabs((TangentialDist))); // scale x to x over tangential
+        DriveRScale =
+            50.0; // scale r to 50% as r is 200% more powerful than x and y.
+
+      } else if (fabs((ricky.TargetX - ricky.CurrentXAxis)) <
+                 fabs((ricky.TargetY -
+                       ricky.CurrentYAxis))) { // scale given x is the limiting
+                                               // factor
+
+        DriveYScale = 100.0;
+        DriveXScale = 100.0 * ((ricky.TargetX - ricky.CurrentXAxis) /
+                               fabs((ricky.TargetY - ricky.CurrentYAxis)));
+        DriveRScale = 50.0 * ((TangentialDist) /
+                              fabs((ricky.TargetY - ricky.CurrentYAxis)));
+      } else { // scale given y is the limiting factor
+
+        DriveYScale = 100.0 * ((ricky.TargetY - ricky.CurrentYAxis) /
+                               fabs((ricky.TargetX - ricky.CurrentXAxis)));
+        DriveXScale = 100.0;
+        DriveRScale = 50.0 * ((TangentialDist) /
+                              fabs((ricky.TargetX - ricky.CurrentXAxis)));
+      }
+    } else if (ricky.TravelStyle == 1) { // calculate scale for x first arc
+
+    } else if (ricky.TravelStyle == 2) { // calculate scale for y first arc
+    }
+
+    // Calculate motor powers over trig values
+    DriveXPower = DriveYScale * sin(Gyroscope.heading(degrees) * M_PI / 180) +
+                  DriveXScale * cos(Gyroscope.heading(degrees) * M_PI / 180);
+    DriveYPower = DriveYScale * cos(Gyroscope.heading(degrees) * M_PI / 180) +
+                  DriveXScale * sin(Gyroscope.heading(degrees) * M_PI / 180);
+
+    // Apply motor powers to individual motors
+    DriveMotors(DriveXPower, DriveYPower, DriveRPower, ricky.TargetSpeed);
+
+    // Print_XYR();
+    if (globaldelta < (0.001 * speed * RampDown)) {
+      breakcount++;
+    } else {
+      breakcount = 0;
+    }
+
+    if (breakcount > 100 && RampUp > .7 && HardCurve > 0.7) {
+      DriveMotors(0, 0, 0, 0);
+      break;
+    }
+  } else {
+    ricky.Engine_Busy = false; // Set busy flag to false so autonomous code can
+    // continue
+    DriveMotors(0, 0, 0, 0);
+  }
+}
+
+int Engine() { // Main engine loop
+  while (true) {
+
+    EncoderIntegral();   // Get odometry from encoders
+    MotorVectorEngine(); // Calculate motor powers from inputs in
+                         // Robot_Telemetry structure
+    vex::task::sleep(25);
+  }
 };
 
 /*
 // Precision for stopping at a place
-void Destination(double x, double y, double r, double speed)
+void Destination(double ricky.TargetX, double ricky.TargetY, double r, double
+speed)
 {
-  extern double CurrentXAxis;
-  extern double CurrentYAxis;
+  extern double ricky.CurrentXAxis;
+  extern double ricky.CurrentYAxis;
   extern double globaldelta;
 
   float DriveYScale = 0;
@@ -44,8 +151,9 @@ FR.velocity(percent) || 0.15 < RR.velocity(percent))))
     RampUp = 1.0;
   }
 
-  while (!((fabs((y - CurrentYAxis)) < 10.0 && fabs((TangentialDist)) < 10.0) &&
-fabs((x - CurrentXAxis)) < 10.0))
+  while (!((fabs((ricky.TargetY - ricky.CurrentYAxis)) < 10.0 &&
+fabs((TangentialDist)) < 10.0)
+&& fabs((ricky.TargetX - ricky.CurrentXAxis)) < 10.0))
   {
 
     // Calculate Odometry
@@ -59,54 +167,55 @@ fabs((x - CurrentXAxis)) < 10.0))
       RampUp = 1.0;
     }
 
-    // Gives Time to ramp up speed before collision check regardless of previous
-speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
+    // Gives Time to ramp up speed before collision check regardless of
+previous speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
     {
       HardCurve = 1.0;
     }
 
     // Use quadratic functiion for ramp down
-    RampDown = ((fabs((x - CurrentXAxis)) + fabs((y - CurrentYAxis))) + 1.5 *
-fabs((TangentialDist))) * -0.015; RampDown = (RampDown * RampDown + 15.0) /
-100.0; // 15 defines the floor or minimum value for ramp down. At min, 15% of
-max speed. if (1.0 < RampDown)
+    RampDown = ((fabs((ricky.TargetX - ricky.CurrentXAxis)) +
+fabs((ricky.TargetY - ricky.CurrentYAxis))) + 1.5 * fabs((TangentialDist))) *
+-0.015; RampDown = (RampDown * RampDown + 15.0) / 100.0; // 15 defines the floor
+or minimum value for ramp down. At min, 15% of max speed. if (1.0 < RampDown)
     {
       RampDown = 1.0;
     }
 
     // Calculate Scale for direct line
-    if (fabs((x - CurrentXAxis)) < fabs((TangentialDist)) && fabs((y -
-CurrentYAxis)) < fabs((TangentialDist)))
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((TangentialDist)) &&
+fabs((ricky.TargetY - ricky.CurrentYAxis)) < fabs((TangentialDist)))
     {
-      DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((TangentialDist)));
-      DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((TangentialDist)));
-      DriveRScale = 50.0;
+      DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((TangentialDist))); DriveXScale = 100.0 * (fabs((ricky.TargetX -
+ricky.CurrentXAxis)) / fabs((TangentialDist))); DriveRScale = 50.0;
     }
     else
     {
-      if (fabs((x - CurrentXAxis)) < fabs((y - CurrentYAxis)))
+      if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((ricky.TargetY -
+ricky.CurrentYAxis)))
       {
         DriveYScale = 100.0;
-        DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((y -
-CurrentYAxis))); DriveRScale = 50.0 * (fabs((TangentialDist)) / fabs((y -
-CurrentYAxis)));
+        DriveXScale = 100.0 * (fabs((ricky.TargetX - ricky.CurrentXAxis)) /
+fabs((ricky.TargetY - ricky.CurrentYAxis))); DriveRScale = 50.0 *
+(fabs((TangentialDist)) / fabs((ricky.TargetY - ricky.CurrentYAxis)));
       }
       else
       {
-        DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((x -
-CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
-(fabs((TangentialDist)) / fabs((x - CurrentXAxis)));
+        DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((ricky.TargetX - ricky.CurrentXAxis))); DriveXScale = 100.0; DriveRScale
+= 50.0 * (fabs((TangentialDist)) / fabs((ricky.TargetX - ricky.CurrentXAxis)));
       }
     }
 
     // Solve for direction
-    if (fabs((x - CurrentXAxis)) < 10.0)
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < 10.0)
     {
       DriveXDir = 0.0;
     }
     else
     {
-      if (x - CurrentXAxis < 0.0)
+      if (ricky.TargetX - ricky.CurrentXAxis < 0.0)
       {
         DriveXDir = 1.0 * DriveXScale;
       }
@@ -115,13 +224,13 @@ CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
         DriveXDir = -1.0 * DriveXScale;
       }
     }
-    if (fabs((y - CurrentYAxis)) < 10.0)
+    if (fabs((ricky.TargetY - ricky.CurrentYAxis)) < 10.0)
     {
       DriveYDir = 0.0;
     }
     else
     {
-      if (y - CurrentYAxis < 0.0)
+      if (ricky.TargetY - ricky.CurrentYAxis < 0.0)
       {
         DriveYDir = 1.0 * DriveYScale;
       }
@@ -175,10 +284,11 @@ RampDown));
 }
 
 // Speedy for navigating around obstacles
-void Waypoint(double x, double y, double r, double speed)
+void Waypoint(double ricky.TargetX, double ricky.TargetY, double r, double
+speed)
 {
-  extern double CurrentXAxis;
-  extern double CurrentYAxis;
+  extern double ricky.CurrentXAxis;
+  extern double ricky.CurrentYAxis;
   extern double globaldelta;
 
   float DriveYScale = 0;
@@ -203,8 +313,9 @@ FR.velocity(percent) || 0.15 < RR.velocity(percent))))
     RampUp = 1.0;
   }
 
-  while (!((fabs((y - CurrentYAxis)) < 50.0 && fabs((TangentialDist)) < 50.0) &&
-fabs((x - CurrentXAxis)) < 50.0))
+  while (!((fabs((ricky.TargetY - ricky.CurrentYAxis)) < 50.0 &&
+fabs((TangentialDist)) < 50.0)
+&& fabs((ricky.TargetX - ricky.CurrentXAxis)) < 50.0))
   {
 
     // Calculate Odometry
@@ -218,53 +329,55 @@ fabs((x - CurrentXAxis)) < 50.0))
       RampUp = 1.0;
     }
 
-    // Gives Time to ramp up speed before collision check regardless of previous
-speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
+    // Gives Time to ramp up speed before collision check regardless of
+previous speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
     {
       HardCurve = 1.0;
     }
 
     // Use quadratic functiion for ramp down
-    RampDown = ((fabs((x - CurrentXAxis)) + fabs((y - CurrentYAxis))) + 1.5 *
-fabs((TangentialDist))) * -0.015; RampDown = (RampDown * RampDown + 50.0) /
-100.0; // Ramp down to at max 50% if (1.0 < RampDown)
+    RampDown = ((fabs((ricky.TargetX - ricky.CurrentXAxis)) +
+fabs((ricky.TargetY - ricky.CurrentYAxis))) + 1.5 * fabs((TangentialDist))) *
+-0.015; RampDown = (RampDown * RampDown + 50.0) / 100.0; // Ramp down to at max
+50% if (1.0 < RampDown)
     {
       RampDown = 1.0;
     }
 
     // Calculate Scale for direct line
-    if (fabs((x - CurrentXAxis)) < fabs((TangentialDist)) && fabs((y -
-CurrentYAxis)) < fabs((TangentialDist)))
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((TangentialDist)) &&
+fabs((ricky.TargetY - ricky.CurrentYAxis)) < fabs((TangentialDist)))
     {
-      DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((TangentialDist)));
-      DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((TangentialDist)));
-      DriveRScale = 50.0;
+      DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((TangentialDist))); DriveXScale = 100.0 * (fabs((ricky.TargetX -
+ricky.CurrentXAxis)) / fabs((TangentialDist))); DriveRScale = 50.0;
     }
     else
     {
-      if (fabs((x - CurrentXAxis)) < fabs((y - CurrentYAxis)))
+      if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((ricky.TargetY -
+ricky.CurrentYAxis)))
       {
         DriveYScale = 100.0;
-        DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((y -
-CurrentYAxis))); DriveRScale = 50.0 * (fabs((TangentialDist)) / fabs((y -
-CurrentYAxis)));
+        DriveXScale = 100.0 * (fabs((ricky.TargetX - ricky.CurrentXAxis)) /
+fabs((ricky.TargetY - ricky.CurrentYAxis))); DriveRScale = 50.0 *
+(fabs((TangentialDist)) / fabs((ricky.TargetY - ricky.CurrentYAxis)));
       }
       else
       {
-        DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((x -
-CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
-(fabs((TangentialDist)) / fabs((x - CurrentXAxis)));
+        DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((ricky.TargetX - ricky.CurrentXAxis))); DriveXScale = 100.0; DriveRScale
+= 50.0 * (fabs((TangentialDist)) / fabs((ricky.TargetX - ricky.CurrentXAxis)));
       }
     }
 
     // Solve for direction
-    if (fabs((x - CurrentXAxis)) < 50.0)
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < 50.0)
     {
       DriveXDir = 0.0;
     }
     else
     {
-      if (x - CurrentXAxis < 0.0)
+      if (ricky.TargetX - ricky.CurrentXAxis < 0.0)
       {
         DriveXDir = 1.0 * DriveXScale;
       }
@@ -273,13 +386,13 @@ CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
         DriveXDir = -1.0 * DriveXScale;
       }
     }
-    if (fabs((y - CurrentYAxis)) < 50.0)
+    if (fabs((ricky.TargetY - ricky.CurrentYAxis)) < 50.0)
     {
       DriveYDir = 0.0;
     }
     else
     {
-      if (y - CurrentYAxis < 0.0)
+      if (ricky.TargetY - ricky.CurrentYAxis < 0.0)
       {
         DriveYDir = 1.0 * DriveYScale;
       }
@@ -333,14 +446,15 @@ RampDown));
 }
 
 // drivetype true: destination false: waypoint
-// Draws linear arc that starts in the x direction
-void XArc(double x, double y, double r, double speed, bool drivetype)
+// Draws linear arc that starts in the ricky.TargetX direction
+void XArc(double ricky.TargetX, double ricky.TargetY, double r, double speed,
+bool drivetype)
 {
-  extern double CurrentXAxis;
-  extern double CurrentYAxis;
+  extern double ricky.CurrentXAxis;
+  extern double ricky.CurrentYAxis;
   extern double globaldelta;
 
-  double initXLoc = CurrentXAxis;
+  double initXLoc = ricky.CurrentXAxis;
   float xCompleationRatio = 0;
 
   float DriveYScale = 0;
@@ -376,9 +490,9 @@ FR.velocity(percent) || 0.15 < RR.velocity(percent))))
     RampUp = 1.0;
   }
 
-  while (!(fabs((y - CurrentYAxis)) < (10.0 + increasediffs) &&
-fabs((TangentialDist)) < (10.0 + increasediffs) && fabs((x - CurrentXAxis))
-< 10.0 + (increasediffs)))
+  while (!(fabs((ricky.TargetY - ricky.CurrentYAxis)) < (10.0 + increasediffs)
+&& fabs((TangentialDist)) < (10.0 + increasediffs) && fabs((ricky.TargetX -
+ricky.CurrentXAxis)) < 10.0 + (increasediffs)))
   {
 
     // Calculate Odometry
@@ -392,57 +506,63 @@ fabs((TangentialDist)) < (10.0 + increasediffs) && fabs((x - CurrentXAxis))
       RampUp = 1.0;
     }
 
-    // Gives Time to ramp up speed before collision check regardless of previous
-speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
+    // Gives Time to ramp up speed before collision check regardless of
+previous speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
     {
       HardCurve = 1.0;
     }
 
     // Use quadratic functiion for ramp down
-    RampDown = ((fabs((x - CurrentXAxis)) + fabs((y - CurrentYAxis))) + 1.5 *
-fabs((TangentialDist))) * -0.015; RampDown = (RampDown * RampDown + 15.0) /
-100.0; // 15 defines the floor or minimum value for ramp down. At min, 15% of
-max speed. if (1.0 < RampDown || drivetype == false)
+    RampDown = ((fabs((ricky.TargetX - ricky.CurrentXAxis)) +
+fabs((ricky.TargetY - ricky.CurrentYAxis))) + 1.5 * fabs((TangentialDist))) *
+-0.015; RampDown = (RampDown * RampDown + 15.0) / 100.0; // 15 defines the floor
+or minimum value for ramp down. At min, 15% of max speed. if (1.0 < RampDown ||
+drivetype == false)
     {
       RampDown = 1.0;
     }
 
-    // figure out how close is x to on line
-    xCompleationRatio = (1 - fabs(x - CurrentXAxis) / fabs(x - initXLoc)) * 100;
+    // figure out how close is ricky.TargetX to on line
+    xCompleationRatio = (1 - fabs(ricky.TargetX - ricky.CurrentXAxis) /
+fabs(ricky.TargetX - initXLoc)) * 100;
 
-    // Calculate Scale for hitting x dest., then hitting y dest.
-    if (fabs((x - CurrentXAxis)) < fabs((TangentialDist)) && fabs((y -
-CurrentYAxis)) < fabs((TangentialDist)))
+    // Calculate Scale for hitting ricky.TargetX dest., then hitting
+ricky.TargetY dest. if (fabs((ricky.TargetX - ricky.CurrentXAxis)) <
+fabs((TangentialDist)) && fabs((ricky.TargetY - ricky.CurrentYAxis)) <
+fabs((TangentialDist)))
     {
-      DriveYScale = xCompleationRatio * (fabs((y - CurrentYAxis)) /
-fabs((TangentialDist))); DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) /
-fabs((TangentialDist))); DriveRScale = 50.0;
+      DriveYScale = xCompleationRatio * (fabs((ricky.TargetY -
+ricky.CurrentYAxis)) / fabs((TangentialDist))); DriveXScale = 100.0 *
+(fabs((ricky.TargetX - ricky.CurrentXAxis)) / fabs((TangentialDist)));
+DriveRScale = 50.0;
     }
     else
     {
-      if (fabs((x - CurrentXAxis)) < fabs((y - CurrentYAxis)))
+      if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((ricky.TargetY -
+ricky.CurrentYAxis)))
       {
         DriveYScale = xCompleationRatio;
-        DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((y -
-CurrentYAxis))); DriveRScale = 50.0 * (fabs((TangentialDist)) / fabs((y -
-CurrentYAxis)));
+        DriveXScale = 100.0 * (fabs((ricky.TargetX - ricky.CurrentXAxis)) /
+fabs((ricky.TargetY - ricky.CurrentYAxis))); DriveRScale = 50.0 *
+(fabs((TangentialDist)) / fabs((ricky.TargetY - ricky.CurrentYAxis)));
       }
       else
       {
-        DriveYScale = xCompleationRatio * (fabs((y - CurrentYAxis)) / fabs((x -
-CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
-(fabs((TangentialDist)) / fabs((x - CurrentXAxis)));
+        DriveYScale = xCompleationRatio * (fabs((ricky.TargetY -
+ricky.CurrentYAxis)) / fabs((ricky.TargetX
+- ricky.CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
+(fabs((TangentialDist)) / fabs((ricky.TargetX - ricky.CurrentXAxis)));
       }
     }
 
     // Solve for direction
-    if (fabs((x - CurrentXAxis)) < 10.0 + increasediffs)
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < 10.0 + increasediffs)
     {
       DriveXDir = 0.0;
     }
     else
     {
-      if (x - CurrentXAxis < 0.0)
+      if (ricky.TargetX - ricky.CurrentXAxis < 0.0)
       {
         DriveXDir = 1.0 * DriveXScale;
       }
@@ -451,13 +571,13 @@ CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
         DriveXDir = -1.0 * DriveXScale;
       }
     }
-    if (fabs((y - CurrentYAxis)) < 10.0 + increasediffs)
+    if (fabs((ricky.TargetY - ricky.CurrentYAxis)) < 10.0 + increasediffs)
     {
       DriveYDir = 0.0;
     }
     else
     {
-      if (y - CurrentYAxis < 0.0)
+      if (ricky.TargetY - ricky.CurrentYAxis < 0.0)
       {
         DriveYDir = 1.0 * DriveYScale;
       }
@@ -514,14 +634,15 @@ RampDown));
 }
 
 // drivetype true: destination false: waypoint
-// Draws a linear arc that starts in the y direction
-void YArc(double x, double y, double r, double speed, bool drivetype)
+// Draws a linear arc that starts in the ricky.TargetY direction
+void YArc(double ricky.TargetX, double ricky.TargetY, double r, double speed,
+bool drivetype)
 {
-  extern double CurrentXAxis;
-  extern double CurrentYAxis;
+  extern double ricky.CurrentXAxis;
+  extern double ricky.CurrentYAxis;
   extern double globaldelta;
 
-  double initYLoc = CurrentYAxis;
+  double initYLoc = ricky.CurrentYAxis;
   float YCompleationRatio = 0;
 
   float DriveYScale = 0;
@@ -557,9 +678,9 @@ FR.velocity(percent) || 0.15 < RR.velocity(percent))))
     RampUp = 1.0;
   }
 
-  while (!(fabs((y - CurrentYAxis)) < (10.0 + increasediffs) &&
-fabs((TangentialDist)) < (10.0 + increasediffs) && fabs((x - CurrentXAxis))
-< 10.0 + (increasediffs)))
+  while (!(fabs((ricky.TargetY - ricky.CurrentYAxis)) < (10.0 + increasediffs)
+&& fabs((TangentialDist)) < (10.0 + increasediffs) && fabs((ricky.TargetX -
+ricky.CurrentXAxis)) < 10.0 + (increasediffs)))
   {
 
     // Calculate Odometry
@@ -573,57 +694,63 @@ fabs((TangentialDist)) < (10.0 + increasediffs) && fabs((x - CurrentXAxis))
       RampUp = 1.0;
     }
 
-    // Gives Time to ramp up speed before collision check regardless of previous
-speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
+    // Gives Time to ramp up speed before collision check regardless of
+previous speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
     {
       HardCurve = 1.0;
     }
 
     // Use quadratic functiion for ramp down
-    RampDown = ((fabs((x - CurrentXAxis)) + fabs((y - CurrentYAxis))) + 1.5 *
-fabs((TangentialDist))) * -0.015; RampDown = (RampDown * RampDown + 15.0) /
-100.0; // 15 defines the floor or minimum value for ramp down. At min, 15% of
-max speed. if (1.0 < RampDown || drivetype == false)
+    RampDown = ((fabs((ricky.TargetX - ricky.CurrentXAxis)) +
+fabs((ricky.TargetY - ricky.CurrentYAxis))) + 1.5 * fabs((TangentialDist))) *
+-0.015; RampDown = (RampDown * RampDown + 15.0) / 100.0; // 15 defines the floor
+or minimum value for ramp down. At min, 15% of max speed. if (1.0 < RampDown ||
+drivetype == false)
     {
       RampDown = 1.0;
     }
 
-    // figure out how close is x to on line
-    YCompleationRatio = (1 - fabs(y - CurrentYAxis) / fabs(y - initYLoc)) * 100;
+    // figure out how close is ricky.TargetX to on line
+    YCompleationRatio = (1 - fabs(ricky.TargetY - ricky.CurrentYAxis) /
+fabs(ricky.TargetY - initYLoc)) * 100;
 
-    // Calculate Scale for hitting x dest., then hitting y dest.
-    if (fabs((x - CurrentXAxis)) < fabs((TangentialDist)) && fabs((y -
-CurrentYAxis)) < fabs((TangentialDist)))
+    // Calculate Scale for hitting ricky.TargetX dest., then hitting
+ricky.TargetY dest. if (fabs((ricky.TargetX - ricky.CurrentXAxis)) <
+fabs((TangentialDist)) && fabs((ricky.TargetY - ricky.CurrentYAxis)) <
+fabs((TangentialDist)))
     {
-      DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((TangentialDist)));
-      DriveXScale = YCompleationRatio * (fabs((x - CurrentXAxis)) /
-fabs((TangentialDist))); DriveRScale = 50.0;
+      DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((TangentialDist))); DriveXScale = YCompleationRatio * (fabs((ricky.TargetX
+- ricky.CurrentXAxis)) / fabs((TangentialDist))); DriveRScale = 50.0;
     }
     else
     {
-      if (fabs((x - CurrentXAxis)) < fabs((y - CurrentYAxis)))
+      if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((ricky.TargetY -
+ricky.CurrentYAxis)))
       {
         DriveYScale = 100.0;
-        DriveXScale = YCompleationRatio * (fabs((x - CurrentXAxis)) / fabs((y -
-CurrentYAxis))); DriveRScale = 50.0 * (fabs((TangentialDist)) / fabs((y -
-CurrentYAxis)));
+        DriveXScale = YCompleationRatio * (fabs((ricky.TargetX -
+ricky.CurrentXAxis)) / fabs((ricky.TargetY
+- ricky.CurrentYAxis))); DriveRScale = 50.0 * (fabs((TangentialDist)) /
+fabs((ricky.TargetY - ricky.CurrentYAxis)));
       }
       else
       {
-        DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((x -
-CurrentXAxis))); DriveXScale = YCompleationRatio; DriveRScale = 50.0 *
-(fabs((TangentialDist)) / fabs((x - CurrentXAxis)));
+        DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((ricky.TargetX - ricky.CurrentXAxis))); DriveXScale = YCompleationRatio;
+DriveRScale = 50.0 * (fabs((TangentialDist)) / fabs((ricky.TargetX -
+ricky.CurrentXAxis)));
       }
     }
 
     // Solve for direction
-    if (fabs((x - CurrentXAxis)) < 10.0 + increasediffs)
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < 10.0 + increasediffs)
     {
       DriveXDir = 0.0;
     }
     else
     {
-      if (x - CurrentXAxis < 0.0)
+      if (ricky.TargetX - ricky.CurrentXAxis < 0.0)
       {
         DriveXDir = 1.0 * DriveXScale;
       }
@@ -632,13 +759,13 @@ CurrentXAxis))); DriveXScale = YCompleationRatio; DriveRScale = 50.0 *
         DriveXDir = -1.0 * DriveXScale;
       }
     }
-    if (fabs((y - CurrentYAxis)) < 10.0 + increasediffs)
+    if (fabs((ricky.TargetY - ricky.CurrentYAxis)) < 10.0 + increasediffs)
     {
       DriveYDir = 0.0;
     }
     else
     {
-      if (y - CurrentYAxis < 0.0)
+      if (ricky.TargetY - ricky.CurrentYAxis < 0.0)
       {
         DriveYDir = 1.0 * DriveYScale;
       }
@@ -694,10 +821,10 @@ RampDown));
   }
 }
 
-void Ram(double x, double y, double r)
+void Ram(double ricky.TargetX, double ricky.TargetY, double r)
 {
-  extern double CurrentXAxis;
-  extern double CurrentYAxis;
+  extern double ricky.CurrentXAxis;
+  extern double ricky.CurrentYAxis;
   extern double globaldelta;
 
   float DriveYScale = 0;
@@ -722,8 +849,9 @@ FR.velocity(percent) || 0.15 < RR.velocity(percent))))
     RampUp = 1.0;
   }
 
-  while (!((fabs((y - CurrentYAxis)) < 50.0 && fabs((TangentialDist)) < 50.0) &&
-fabs((x - CurrentXAxis)) < 50.0))
+  while (!((fabs((ricky.TargetY - ricky.CurrentYAxis)) < 50.0 &&
+fabs((TangentialDist)) < 50.0)
+&& fabs((ricky.TargetX - ricky.CurrentXAxis)) < 50.0))
   {
 
     // Calculate Odometry
@@ -737,53 +865,55 @@ fabs((x - CurrentXAxis)) < 50.0))
       RampUp = 1.0;
     }
 
-    // Gives Time to ramp up speed before collision check regardless of previous
-speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
+    // Gives Time to ramp up speed before collision check regardless of
+previous speed. HardCurve = HardCurve * 1.06; if (1.0 < HardCurve)
     {
       HardCurve = 1.0;
     }
 
     // Use quadratic functiion for ramp down
-    RampDown = ((fabs((x - CurrentXAxis)) + fabs((y - CurrentYAxis))) + 1.5 *
-fabs((TangentialDist))) * -0.015; RampDown = (RampDown * RampDown + 50.0) /
-100.0; // Ramp down to at max 50% if (1.0 < RampDown)
+    RampDown = ((fabs((ricky.TargetX - ricky.CurrentXAxis)) +
+fabs((ricky.TargetY - ricky.CurrentYAxis))) + 1.5 * fabs((TangentialDist))) *
+-0.015; RampDown = (RampDown * RampDown + 50.0) / 100.0; // Ramp down to at max
+50% if (1.0 < RampDown)
     {
       RampDown = 1.0;
     }
 
     // Calculate Scale for direct line
-    if (fabs((x - CurrentXAxis)) < fabs((TangentialDist)) && fabs((y -
-CurrentYAxis)) < fabs((TangentialDist)))
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((TangentialDist)) &&
+fabs((ricky.TargetY - ricky.CurrentYAxis)) < fabs((TangentialDist)))
     {
-      DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((TangentialDist)));
-      DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((TangentialDist)));
-      DriveRScale = 50.0;
+      DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((TangentialDist))); DriveXScale = 100.0 * (fabs((ricky.TargetX -
+ricky.CurrentXAxis)) / fabs((TangentialDist))); DriveRScale = 50.0;
     }
     else
     {
-      if (fabs((x - CurrentXAxis)) < fabs((y - CurrentYAxis)))
+      if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((ricky.TargetY -
+ricky.CurrentYAxis)))
       {
         DriveYScale = 100.0;
-        DriveXScale = 100.0 * (fabs((x - CurrentXAxis)) / fabs((y -
-CurrentYAxis))); DriveRScale = 50.0 * (fabs((TangentialDist)) / fabs((y -
-CurrentYAxis)));
+        DriveXScale = 100.0 * (fabs((ricky.TargetX - ricky.CurrentXAxis)) /
+fabs((ricky.TargetY - ricky.CurrentYAxis))); DriveRScale = 50.0 *
+(fabs((TangentialDist)) / fabs((ricky.TargetY - ricky.CurrentYAxis)));
       }
       else
       {
-        DriveYScale = 100.0 * (fabs((y - CurrentYAxis)) / fabs((x -
-CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
-(fabs((TangentialDist)) / fabs((x - CurrentXAxis)));
+        DriveYScale = 100.0 * (fabs((ricky.TargetY - ricky.CurrentYAxis)) /
+fabs((ricky.TargetX - ricky.CurrentXAxis))); DriveXScale = 100.0; DriveRScale
+= 50.0 * (fabs((TangentialDist)) / fabs((ricky.TargetX - ricky.CurrentXAxis)));
       }
     }
 
     // Solve for direction
-    if (fabs((x - CurrentXAxis)) < 50.0)
+    if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < 50.0)
     {
       DriveXDir = 0.0;
     }
     else
     {
-      if (x - CurrentXAxis < 0.0)
+      if (ricky.TargetX - ricky.CurrentXAxis < 0.0)
       {
         DriveXDir = 1.0 * DriveXScale;
       }
@@ -792,13 +922,13 @@ CurrentXAxis))); DriveXScale = 100.0; DriveRScale = 50.0 *
         DriveXDir = -1.0 * DriveXScale;
       }
     }
-    if (fabs((y - CurrentYAxis)) < 50.0)
+    if (fabs((ricky.TargetY - ricky.CurrentYAxis)) < 50.0)
     {
       DriveYDir = 0.0;
     }
     else
     {
-      if (y - CurrentYAxis < 0.0)
+      if (ricky.TargetY - ricky.CurrentYAxis < 0.0)
       {
         DriveYDir = 1.0 * DriveYScale;
       }

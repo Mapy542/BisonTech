@@ -1,6 +1,7 @@
+#include "Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 
-// Combines motor powers over directions for multiaxis movings
+// Combines motor powers over directions for multi-axis moving
 void DriveMotors(double x, double y, double r, double s) {
   if (!(x == 0.0) || (!(y == 0.0) || !(r == 0.0))) {
     FL.setVelocity((((y * s + r * s) - x * s) + 0.0), percent);
@@ -61,41 +62,28 @@ void ManualMotors() {
   }
 }
 
-// post condition: return the result of the log function in desmos where x is
-// the joystick value note: log only works with positive values check if the
-// value is positive or negative and use the first or second log function
-int JoystickLog(int joystickvalue) {
-  int output = 0;
-  if (joystickvalue > 0) {
-    output = log(joystickvalue + 1) * 50;
-  } else if (joystickvalue < 0) {
-    output = log(-1 * joystickvalue + 1) * -50;
-  }
-  return output;
-}
-
 // post condition: return the result of the x^2.2 function in desmos where x is
 // the joystick value
 int JoystickCubic(int joystickvalue) { return pow(joystickvalue, 2.2) / 200; }
 
 // headless manual control
 void HeadlessManualDriveTrainControl() {
-  extern struct Robot_Telemetry ricky;
+  extern Robot_Telemetry ricky;
   // extern Robot_Telemetry ricky;
 
   // x component is the horizontal movement of the joystick times the cosine of
   // the gyro angle times pi over 180. the pi and 180 convert the ouput of sin
   // and cos from degrees to radians i assume.
   double X_Speed = JoystickCubic(Controller1.Axis3.position()) *
-                       sin(Gyroscope.heading(degrees)) * M_PI / 180 +
+                       sin(Gyroscope.heading(degrees) * M_PI / 180) +
                    JoystickCubic(Controller1.Axis4.position()) *
-                       cos(Gyroscope.heading(degrees)) * M_PI / 180;
+                       cos(Gyroscope.heading(degrees) * M_PI / 180);
   double Y_Speed = JoystickCubic(Controller1.Axis3.position()) *
-                       cos(Gyroscope.heading(degrees)) * M_PI / 180 +
+                       cos(Gyroscope.heading(degrees) * M_PI / 180) +
                    JoystickCubic(Controller1.Axis4.position()) *
-                       sin(Gyroscope.heading(degrees)) * M_PI / 180;
+                       sin(Gyroscope.heading(degrees) * M_PI / 180);
   double R_Speed;
-  if (!ricky.Overide_Manual_R) {
+  if (!ricky.Override_Manual_R) {
     R_Speed = Controller1.Axis1.position();
   } else {
     R_Speed = ricky.Override_R_Speed;

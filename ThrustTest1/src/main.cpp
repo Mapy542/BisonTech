@@ -13,8 +13,7 @@ int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, Rig
 
 // Autonomousv2
 int onauton_autonomous_0() {
-  //vex::task thrust_vector_calc(Engine);
-  //vex::task odometry(Odometry_Daemon);
+  vex::task Vector_Engine(Engine);
   //vex::task autonoma_sequence(ThrustTest);
 return 0;
 }

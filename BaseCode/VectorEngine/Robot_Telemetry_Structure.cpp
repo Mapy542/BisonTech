@@ -1,18 +1,34 @@
-typedef struct { // a javalike classlike thingy but just with a bunch of public
-                 // fields
+#ifndef Robot_Telemetry_Structure_cpp_ // ensure that this file is only
+                                       // included once
+#define Robot_Telemetry_Structure_cpp_
 
-  double TunedMass; // Used for Odometry and kinematics
+struct Robot_Telemetry { // a java like class like thingy but just with
+                         // a bunch of
+                         // public fields
 
+  // CONSTANTS////////////////////////////////////////////////
+  const double MaxAcceleration = 1; // percent
+
+  const double XEncoderError = 0; // Used for encoder angular error correction
+  const double YEncoderError = 0; // Used for encoder angular error correction
+
+  const double EncoderTicksPerMM = 0.6223678817; // mm per deg
+
+  const float DistanceTolerance = 4; // mm
+  const float AngleTolerance = 2;    // degrees
+
+  const double MaxRobotVelocity =
+      600 / 2 / EncoderTicksPerMM; // motors at 600 rpm / 2 becuase 45 deg then
+                                   // convert deg to mm theoretically 500
+                                   // mm/m???? might be bad
+  // ODOMETRY//////////////////////////////////////////////////////////
   double CurrentXAxis; // From Odometry systems
   double CurrentYAxis;
 
   double TargetXAxis; // For vectoring engine
   double TargetYAxis;
   double TargetTheta;
-
-  double OverideXAxis; // For mutable object positions
-  double OverideYAxis;
-  double OverideTheta;
+  double TargetSpeed; // For vectoring engine
 
   double CurrentXEncoderValue; // Used for encoder odemetry
                                // integration(calculus)
@@ -23,25 +39,22 @@ typedef struct { // a javalike classlike thingy but just with a bunch of public
   double CurrentYVelocity;
   double CurrentRVelocity;
 
-  // double MaxXVelocity = 1;//Vectoring constants
-  // double MaxYVelocity = 1;
-  // double MaxRVelocity = 1;
-
-  double CurrentXAcceleration; // Used for vectoring engine
-  double CurrentYAcceleration;
-  double CurrentRAcceleration;
-
-  // double MaxXAcceleration = 1;//Vectoring constants
-  // double MaxYAcceleration = 1;
-  // double MaxRAcceleration = 1;
-
   long CurrentTime; // Used for odometry integration
 
+  // MANUAL HYBRID CONTROL///////////////////////////////////////////////
   double Override_R_Speed; // Used for manual control
   bool Override_Manual_R;  // Used for manual control
-} Robot_Telemetry;
+
+  // ENGINE////////////////////////////////////////////////////////
+
+  bool Engine_Busy; // flag for if the engine is busy
+
+  int TravelStyle = 0; // 0 = direct line, 1 = arc x first, 2 = arc y first
+};
 
 /*void PrintTelemetry(Robot_Telemetry robo) {
   printf("\n");
   printf("%.6f", "CurrentXAxis" + < (robo.CurrentXAxis) + "\n");
 }*/
+
+#endif // end double define check
