@@ -20,7 +20,7 @@ void RadialDistance(double Theta1, double Theta2) {
 void FromGyro(double theta1) {
   return RadialDistance(Gyroscope.heading(degrees), theta1);
 }
-
+/*
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
 
@@ -119,6 +119,7 @@ int Engine() { // Main engine loop
     vex::task::sleep(25);
   }
 };
+*/
 
 /*
 // Precision for stopping at a place
