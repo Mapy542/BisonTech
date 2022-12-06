@@ -57,5 +57,5 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
   // derive velocity from change in position over time
   ricky.CurrentXVelocity = XChange / (double)DeltaTime / 1000;    // mm/s
   ricky.CurrentYVelocity = YChange / (double)DeltaTime / 1000;    // mm/s
-  ricky.CurrentZVelocity = DeltaTheta / (double)DeltaTime / 1000; // deg/s
+  ricky.CurrentRVelocity = DeltaTheta / (double)DeltaTime / 1000; // deg/s
 };
