@@ -5,7 +5,7 @@
 
 // Radial Distance calculator. takes two degrees and returns the distance
 // between them will wrap around 360 degrees if needed
-void RadialDistance(double Theta1, double Theta2) {
+double RadialDistance(double Theta1, double Theta2) {
   double distance = Theta1 - Theta2;
   if (distance > 180) {
     distance -= 360;
@@ -17,7 +17,7 @@ void RadialDistance(double Theta1, double Theta2) {
 }
 
 // RadialDistance given theta1 is the gyro reading
-void FromGyro(double theta1) {
+double FromGyro(double theta1) {
   return RadialDistance(Gyroscope.heading(degrees), theta1);
 }
 /*
