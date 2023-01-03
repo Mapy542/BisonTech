@@ -1,8 +1,7 @@
-#include "..\AuxiliaryFunctions\Telemetry.cpp"
 #include "MotorDriver.cpp"
 #include "Odometry.cpp"
 #include "vex.h"
-
+/*
 // Radial Distance calculator. takes two degrees and returns the distance
 // between them will wrap around 360 degrees if needed
 double RadialDistance(double Theta1, double Theta2) {
@@ -20,7 +19,13 @@ double RadialDistance(double Theta1, double Theta2) {
 double FromGyro(double theta1) {
   return RadialDistance(Gyroscope.heading(degrees), theta1);
 }
-/*
+
+double AbsoluteCumulativeVelocity() {
+  extern Robot_Telemetry ricky;
+  return fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
+         fabs(ricky.CurrentRVelocity);
+}
+
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
 
@@ -29,21 +34,28 @@ void MotorVectorEngine() { // main calculation loop
       (fabs(ricky.TargetYAxis - ricky.ricky.CurrentYAxis) >
        ricky.DistanceTolerance) ||
       (fabs(ricky.TargetTheta - ricky.CurrentThetaValue) >
-       ricky.AngleTolerance)) {
+       ricky.AngleTolerance)) { // if the robot is out of target range +
+                                // tolerance then run calculations
 
     double DriveXScale;
     double DriveYScale;
     double DriveRScale;
 
-    ricky.Engine_Busy =
-        true; // Set busy flag to true so autonomous code can wait
+    if (!ricky.Engine_Busy) {
+      ricky.Engine_Busy =
+          true; // Set busy flag to true so autonomous code can wait
+      ricky.Busy_Start_Time = (double)vex::timer::system()
 
-    TangentialDist =
-        3.0 * (FromGyro(ricky.TargetTheta) *
-               6.2831); // find tangential distance to linearize rotation to the
-                        // same scale as ricky.TargetX and ricky.TargetY. Then
-                        // increase the scale by 3 to make it more sensitive to
-                        // rotation.
+                                  ricky.StartingXAxis = ricky.CurrentXAxis;
+      ricky.StartingYAxis = ricky.CurrentYAxis;
+      ricky.StartingTheta = ricky.CurrentThetaValue;
+    }
+
+    TangentialDist = 3.0 * FromGyro(ricky.TargetTheta) *
+                     6.2831; // find tangential distance to linearize rotation
+                             // to the same scale as ricky.TargetX and
+                             // ricky.TargetY. Then increase the scale by 3 to
+                             // make it more sensitive to rotation.
 
     if (ricky.TravelStyle == 0) { // Calculate Scale for direct line
       if (fabs((ricky.TargetX - ricky.CurrentXAxis)) < fabs((TangentialDist)) &&
@@ -84,19 +96,19 @@ void MotorVectorEngine() { // main calculation loop
     }
 
     // Calculate motor powers over trig values
-    DriveXPower = DriveYScale * sin(Gyroscope.heading(degrees) * M_PI / 180) +
-                  DriveXScale * cos(Gyroscope.heading(degrees) * M_PI / 180);
-    DriveYPower = DriveYScale * cos(Gyroscope.heading(degrees) * M_PI / 180) +
-                  DriveXScale * sin(Gyroscope.heading(degrees) * M_PI / 180);
+    double DriveXPower =
+        DriveYScale * sin(Gyroscope.heading(degrees) * M_PI / 180) +
+        DriveXScale * cos(Gyroscope.heading(degrees) * M_PI / 180);
+    double DriveYPower =
+        DriveYScale * cos(Gyroscope.heading(degrees) * M_PI / 180) +
+        DriveXScale * sin(Gyroscope.heading(degrees) * M_PI / 180);
 
     // Apply motor powers to individual motors
     DriveMotors(DriveXPower, DriveYPower, DriveRPower, ricky.TargetSpeed);
 
-    // Print_XYR();
-    if (globaldelta < (0.001 * speed * RampDown)) {
-      breakcount++;
-    } else {
-      breakcount = 0;
+    if ((double)vex::timer::system() - ricky.BusyStartTime > 250 &&
+        AbsoluteCumulativeVelocity() < ricky.TargetSpeed * 0.1) {
+      ricky.Travel_Impeded = true;
     }
 
     if (breakcount > 100 && RampUp > .7 && HardCurve > 0.7) {
@@ -104,8 +116,12 @@ void MotorVectorEngine() { // main calculation loop
       break;
     }
   } else {
-    ricky.Engine_Busy = false; // Set busy flag to false so autonomous code can
-    // continue
+    if (!ricky.Engine_Busy) {
+      ricky.Engine_Busy =
+          false; // Set busy flag to false so autonomous code can
+      // continue
+      ricky.Travel_Impeded = false;
+    }
     DriveMotors(0, 0, 0, 0);
   }
 }
@@ -120,7 +136,6 @@ int Engine() { // Main engine loop
   }
 };
 */
-
 /*
 // Precision for stopping at a place
 void Destination(double ricky.TargetX, double ricky.TargetY, double r, double

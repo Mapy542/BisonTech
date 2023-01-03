@@ -1,7 +1,5 @@
-#include "AuxiliaryFunctions\BackBase.cpp"
-#include "AuxiliaryFunctions\BaseLock.cpp"
-#include "AuxiliaryFunctions\CascadeLift.cpp"
-#include "AuxiliaryFunctions\PneumaticPush.cpp"
+#include "AuxiliaryFunctions\Flywheel.cpp"
+#include "AuxiliaryFunctions\Intake.cpp"
 #include "VectorEngine\Engine.cpp"
 
 //#include "VectorEngine\Engine.cpp"
