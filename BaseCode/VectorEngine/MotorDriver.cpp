@@ -64,7 +64,7 @@ void ManualMotors() {
 
 // post condition: return the result of the x^2.2 function in desmos where x is
 // the joystick value
-int JoystickCubic(int joystickvalue) { return pow(joystickvalue, 2.2) / 200; }
+int JoystickCubic(int joystickvalue) { return pow(joystickvalue, 3) / 200; }
 
 // headless manual control
 void HeadlessManualDriveTrainControl() {
@@ -74,6 +74,8 @@ void HeadlessManualDriveTrainControl() {
   // x component is the horizontal movement of the joystick times the cosine of
   // the gyro angle times pi over 180. the pi and 180 convert the ouput of sin
   // and cos from degrees to radians i assume.
+  /*
+  //headless why u no work
   double X_Speed = JoystickCubic(Controller1.Axis3.position()) *
                        sin(Gyroscope.heading(degrees) * M_PI / 180) +
                    JoystickCubic(Controller1.Axis4.position()) *
@@ -81,7 +83,12 @@ void HeadlessManualDriveTrainControl() {
   double Y_Speed = JoystickCubic(Controller1.Axis3.position()) *
                        cos(Gyroscope.heading(degrees) * M_PI / 180) +
                    JoystickCubic(Controller1.Axis4.position()) *
-                       sin(Gyroscope.heading(degrees) * M_PI / 180);
+                       sin(Gyroscope.heading(degrees) * M_PI / 180);*/
+  // non headless
+  double X_Speed = JoystickCubic(Controller1.Axis3.position()) +
+                   JoystickCubic(Controller1.Axis4.position());
+  double Y_Speed = JoystickCubic(Controller1.Axis3.position()) +
+                   JoystickCubic(Controller1.Axis4.position());
   double R_Speed;
   if (!ricky.Override_Manual_R) {
     R_Speed = Controller1.Axis1.position();

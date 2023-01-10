@@ -41,21 +41,21 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
 
   // Integrate encoder values to get odometry
   double XChange = (EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
-                   sin(Gyroscope.heading(degrees) * M_PI / 180 +
-                       (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
-                           cos(Gyroscope.heading(degrees) * M_PI / 180)) *
-                   ricky.EncoderTicksPerMM;
+                       sin(Gyroscope.heading(degrees) * M_PI / 180) +
+                   (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
+                       cos(Gyroscope.heading(degrees) * M_PI / 180) *
+                       ricky.EncoderTicksPerMM;
   double YChange = (EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
-                   cos(Gyroscope.heading(degrees) * M_PI / 180 +
-                       (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
-                           sin(Gyroscope.heading(degrees) * M_PI / 180)) *
-                   ricky.EncoderTicksPerMM;
+                       cos(Gyroscope.heading(degrees) * M_PI / 180) +
+                   (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
+                       sin(Gyroscope.heading(degrees) * M_PI / 180) *
+                       ricky.EncoderTicksPerMM;
 
   ricky.CurrentXAxis += XChange; // accumulate change in position
   ricky.CurrentYAxis += YChange;
 
   // derive velocity from change in position over time
-  ricky.CurrentXVelocity = XChange / (double)DeltaTime / 1000;    // mm/s
-  ricky.CurrentYVelocity = YChange / (double)DeltaTime / 1000;    // mm/s
-  ricky.CurrentRVelocity = DeltaTheta / (double)DeltaTime / 1000; // deg/s
+  ricky.CurrentXVelocity = XChange / (double)DeltaTime;    // mm/ms
+  ricky.CurrentYVelocity = YChange / (double)DeltaTime;    // mm/ms
+  ricky.CurrentRVelocity = DeltaTheta / (double)DeltaTime; // deg/ms
 };

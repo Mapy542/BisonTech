@@ -7,7 +7,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
                          // public fields
 
   // CONSTANTS////////////////////////////////////////////////
-  const double MaxAcceleration = 1; // percent
+  const double MaxAcceleration = 0.03; // percent per cycle
 
   const double XEncoderError = 0; // Used for encoder angular error correction
   const double YEncoderError = 0; // Used for encoder angular error correction
@@ -42,29 +42,26 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   // ENGINE////////////////////////////////////////////////////////
 
-  bool Engine_Busy = false;    // flag for if the engine is busy
-  bool Travel_Impeded = false; // flag for if the robot is stuck
+  bool EngineBusy = false;    // flag for if the engine is busy
+  bool TravelImpeded = false; // flag for if the robot is stuck
 
+  double TargetXVelocity = 0; // Used for vectoring engine
+  double TargetYVelocity = 0; // mm/ms
+  double TargetRVelocity = 0;
+
+  double SetXVelocity = 0; // Used for calculating velocity change
+  double SetYVelocity = 0;
+  double SetRVelocity = 0;
+
+  long BusyStartTime; // Used for acceleration and stuck detection
+
+  // PATHING////////////////////////////////////////////////////////
   int TravelStyle = 0; // 0 = direct line, 1 = arc x first, 2 = arc y first
 
   double TargetXAxis = 0; // Used to describe next waypoint
   double TargetYAxis = 0;
   double TargetTheta = 180;
   double TargetSpeed = 1;
-
-  double FutureXAxis =
-      0; // Used to describe next next waypoint for transition calculations
-  double FutureYAxis = 0; // Set to same as Target waypoint if stop desired
-  double FutureTheta = 180;
-  double FutureSpeed = 1; // speed should be 0 if stop desired
-
-  double StartingXAxis =
-      0; // Used to describe start of travel for completion ratio
-  double StartingYAxis = 0;
-  double StartingTheta = 180;
-  double StartingSpeed = 1;
-
-  long Busy_Start_Time; // Used for acceleration and stuck detection
 };
 
 /*void PrintTelemetry(Robot_Telemetry robo) {

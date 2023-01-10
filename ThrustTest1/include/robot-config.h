@@ -13,8 +13,6 @@ extern motor RR;
 extern inertial Gyroscope;
 extern encoder y;
 extern encoder x;
-extern digital_out DigitalOutH;
-extern digital_out DigitalOutG;
 extern signature Vision__SIG_1;
 extern signature Vision__SIG_2;
 extern signature Vision__SIG_3;

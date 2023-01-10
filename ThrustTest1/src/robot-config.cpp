@@ -14,10 +14,8 @@ motor RL = motor(PORT6, ratio6_1, false);
 motor FR = motor(PORT9, ratio6_1, true);
 motor RR = motor(PORT10, ratio6_1, true);
 inertial Gyroscope = inertial(PORT4);
-encoder y = encoder(Brain.ThreeWirePort.A);
-encoder x = encoder(Brain.ThreeWirePort.C);
-digital_out DigitalOutH = digital_out(Brain.ThreeWirePort.H);
-digital_out DigitalOutG = digital_out(Brain.ThreeWirePort.G);
+encoder y = encoder(Brain.ThreeWirePort.C);
+encoder x = encoder(Brain.ThreeWirePort.A);
 /*vex-vision-config:begin*/
 vision Vision = vision (PORT19, 50);
 /*vex-vision-config:end*/

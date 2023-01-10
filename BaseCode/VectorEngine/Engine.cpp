@@ -1,7 +1,8 @@
 #include "MotorDriver.cpp"
 #include "Odometry.cpp"
 #include "vex.h"
-/*
+#include <cmath>
+
 // Radial Distance calculator. takes two degrees and returns the distance
 // between them will wrap around 360 degrees if needed
 double RadialDistance(double Theta1, double Theta2) {
@@ -28,6 +29,37 @@ double AbsoluteCumulativeVelocity() {
 
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
+  if (ricky.TargetXVelocity != 0 || ricky.TargetYVelocity != 0 ||
+      ricky.TargetRVelocity != 0) {
+    ricky.EngineBusy = true;
+    ricky.SetXVelocity +=
+        fmod(ricky.TargetXVelocity - ricky.CurrentXVelocity,
+             ricky.MaxAcceleration); // fmod is a modulo function for doubles
+    ricky.SetYVelocity += fmod(ricky.TargetYVelocity - ricky.CurrentYVelocity,
+                               ricky.MaxAcceleration);
+    ricky.SetRVelocity += fmod(ricky.TargetRVelocity - ricky.CurrentRVelocity,
+                               ricky.MaxAcceleration);
+
+    DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity, 1);
+  } else {
+    DriveMotors(0, 0, 0, 0);
+    ricky.EngineBusy = false;
+  }
+}
+
+int Engine() { // Main engine loop
+  while (true) {
+
+    EncoderIntegral();   // Get odometry from encoders
+    MotorVectorEngine(); // Calculate motor powers from inputs in
+                         // Robot_Telemetry structure
+    vex::task::sleep(25);
+  }
+};
+
+/*
+//crappycrappy crap
+ extern Robot_Telemetry ricky;
 
   if ((fabs(ricky.TargetXAxis - ricky.ricky.CurrentXAxis) >
        ricky.DistanceTolerance) ||
@@ -124,19 +156,6 @@ void MotorVectorEngine() { // main calculation loop
     }
     DriveMotors(0, 0, 0, 0);
   }
-}
-
-int Engine() { // Main engine loop
-  while (true) {
-
-    EncoderIntegral();   // Get odometry from encoders
-    MotorVectorEngine(); // Calculate motor powers from inputs in
-                         // Robot_Telemetry structure
-    vex::task::sleep(25);
-  }
-};
-*/
-/*
 // Precision for stopping at a place
 void Destination(double ricky.TargetX, double ricky.TargetY, double r, double
 speed)
