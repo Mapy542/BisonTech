@@ -29,30 +29,88 @@ double AbsoluteCumulativeVelocity() {
 
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
-  if (ricky.TargetXVelocity != 0 || ricky.TargetYVelocity != 0 ||
-      ricky.TargetRVelocity != 0) {
+  if (ricky.SetXVelocity != 0 || ricky.SetYVelocity != 0 ||
+      ricky.SetRVelocity != 0) { // if the robot is moving then update busy flag
+                                 // for further scripting
     ricky.EngineBusy = true;
-    ricky.SetXVelocity +=
-        fmod(ricky.TargetXVelocity - ricky.CurrentXVelocity,
-             ricky.MaxAcceleration); // fmod is a modulo function for doubles
-    ricky.SetYVelocity += fmod(ricky.TargetYVelocity - ricky.CurrentYVelocity,
-                               ricky.MaxAcceleration);
-    ricky.SetRVelocity += fmod(ricky.TargetRVelocity - ricky.CurrentRVelocity,
-                               ricky.MaxAcceleration);
-
-    DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity, 1);
   } else {
-    DriveMotors(0, 0, 0, 0);
     ricky.EngineBusy = false;
+  }
+
+  ////////////////WORK OUT CONVERSIONS/////////////////////// from mm/s and
+  /// deg/s to percent rpm
+  // rpower is 2x x and y power because wheel alignment
+  ricky.SetXVelocity +=
+      fmod(ricky.TargetXVelocity - ricky.CurrentXVelocity,
+           ricky.MaxAcceleration); // fmod is a modulo function for doubles
+  ricky.SetYVelocity += fmod(ricky.TargetYVelocity - ricky.CurrentYVelocity,
+                             ricky.MaxAcceleration);
+  ricky.SetRVelocity += fmod(ricky.TargetRVelocity - ricky.CurrentRVelocity,
+                             ricky.MaxAcceleration);
+
+  DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity, 1);
+}
+
+void Direct_Vector_Generator() {
+  extern Robot_Telemetry ricky;
+  if (fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < 5 &&
+      fabs(ricky.TargetYAxis - ricky.CurrentYAxis) < 5 &&
+      fabs(ricky.TargetTheta - ricky.CurrentThetaValue) <
+          2) { // within 10mm or 4deg tolerance stop robot to prevent over tune
+    ricky.TargetXVelocity = 0;
+    ricky.TargetYVelocity = 0;
+    ricky.TargetRVelocity = 0;
+  } else {
+    double TangentialDist =
+        ricky.CurrentThetaValue * 3.14159265359 * 370 / 180.0;
+    if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
+            fabs((TangentialDist)) &&
+        fabs((ricky.TargetYAxis - ricky.CurrentYAxis)) <
+            fabs((TangentialDist))) { // if tangential distance is more than x
+                                      // and y distance
+
+      ricky.TargetYVelocity =
+          100.0 * ((ricky.TargetYAxis - ricky.CurrentYAxis) /
+                   fabs((TangentialDist))); // scale y to y over tangential
+      ricky.TargetXVelocity =
+          100.0 * ((ricky.TargetXAxis - ricky.CurrentXAxis) /
+                   fabs((TangentialDist))); // scale x to x over tangential
+      ricky.TargetRVelocity =
+          50.0; // scale r to 50% as r is 200% more powerful than x and y.
+
+    } else if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
+               fabs((ricky.TargetYAxis -
+                     ricky.CurrentYAxis))) { // scale given x is the limiting
+                                             // factor
+
+      ricky.TargetYVelocity = 100.0;
+      ricky.TargetXVelocity =
+          100.0 * ((ricky.TargetXAxis - ricky.CurrentXAxis) /
+                   fabs((ricky.TargetYAxis - ricky.CurrentYAxis)));
+      ricky.TargetRVelocity =
+          50.0 *
+          ((TangentialDist) / fabs((ricky.TargetYAxis - ricky.CurrentYAxis)));
+    } else { // scale given y is the limiting factor
+
+      ricky.TargetYVelocity =
+          100.0 * ((ricky.TargetYAxis - ricky.CurrentYAxis) /
+                   fabs((ricky.TargetXAxis - ricky.CurrentXAxis)));
+      ricky.TargetXVelocity = 100.0;
+      ricky.TargetRVelocity =
+          50.0 *
+          ((TangentialDist) / fabs((ricky.TargetXAxis - ricky.CurrentXAxis)));
+    }
   }
 }
 
 int Engine() { // Main engine loop
   while (true) {
 
-    EncoderIntegral();   // Get odometry from encoders
-    MotorVectorEngine(); // Calculate motor powers from inputs in
-                         // Robot_Telemetry structure
+    EncoderIntegral();         // Get odometry from encoders
+    Direct_Vector_Generator(); // Calculate motor powers from inputs in
+                               // Robot_Telemetry structure
+    MotorVectorEngine();       // Calculate motor powers from inputs in
+                               // Robot_Telemetry structure
     vex::task::sleep(25);
   }
 };

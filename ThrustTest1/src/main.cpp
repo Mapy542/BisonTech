@@ -1,3 +1,20 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Vision               vision        19              
+// Flywheel1            motor         2               
+// Flywheel2            motor         5               
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 #include "vex.h"
 #include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 

@@ -12,4 +12,10 @@ void ManualFlywheel() {
   }
   Flywheel1.spin(forward);
   Flywheel2.spin(forward);
+
+  if (Controller1.ButtonL1.pressing()) {
+    Trigger.set(true);
+  } else {
+    Trigger.set(false);
+  }
 }

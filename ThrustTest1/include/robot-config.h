@@ -24,6 +24,7 @@ extern vision Vision;
 extern motor Flywheel1;
 extern motor Flywheel2;
 extern motor Intake;
+extern digital_out Trigger;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

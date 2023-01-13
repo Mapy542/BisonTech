@@ -22,6 +22,7 @@ vision Vision = vision (PORT19, 50);
 motor Flywheel1 = motor(PORT2, ratio18_1, false);
 motor Flywheel2 = motor(PORT5, ratio18_1, false);
 motor Intake = motor(PORT14, ratio18_1, false);
+digital_out Trigger = digital_out(Brain.ThreeWirePort.H);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
