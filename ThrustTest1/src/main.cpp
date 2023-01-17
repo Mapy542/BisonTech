@@ -49,6 +49,7 @@ int ondriver_drivercontrol_0() {
     HeadlessManualDriveTrainControl();
     ManualIntake();
     ManualFlywheel();
+    EncoderIntegral();
     wait(5, msec);
   }
 }

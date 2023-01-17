@@ -85,8 +85,8 @@ void HeadlessManualDriveTrainControl() {
                    JoystickCubic(Controller1.Axis4.position()) *
                        sin(Gyroscope.heading(degrees) * M_PI / 180);*/
   // non headless
-  double X_Speed = JoystickCubic(Controller1.Axis3.position());
-  double Y_Speed = JoystickCubic(Controller1.Axis4.position());
+  double X_Speed = JoystickCubic(Controller1.Axis4.position());
+  double Y_Speed = JoystickCubic(Controller1.Axis3.position());
   double R_Speed;
   if (!ricky.Override_Manual_R) {
     R_Speed = Controller1.Axis1.position();

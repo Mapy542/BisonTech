@@ -5,15 +5,31 @@
 //#include "VectorEngine\Engine.cpp"
 #include "vex.h"
 
-// JENA CODE HERE
+/*
+1 = simple destination(x,y,r,s)
+2 = intake(v) velocity
+3 = flywheel(v)
+4 = trigger(p) pulse count
+*/
+double test_route[][5] = {{1, 400.0, 400.0, 180.0, 1.0}, // move to 400 400
+                          {4, 2, 0, 0, 0},               // pulse trigger twice
+                          {1, 200.0, 200.0, 180.0, 1.0}};
 
-// BEN CODE HERE
+int LengthGetter(
+    double routine[][5]) { // returns the length of the given routine
+  return sizeof(routine) / sizeof(double) / 5;
+}
 
-void ThrustTest() {
-  vex::task::sleep(25);
+void AutonomousIndexer(double routine[][5]) {
+  for (int i = 0; i < LengthGetter(routine); i++) {
+  }
+}
+
+int AutonomousRoutineDeamon() { // Main engine loop
   while (true) {
-    Brain.Screen.print("%f", Brain.Battery.current());
-    vex::task::sleep(25);
+    AutonomousIndexer(test_route); // runs through the given routine
+
+    vex::task::sleep(50);
   }
 };
 /*

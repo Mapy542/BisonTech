@@ -1,9 +1,16 @@
+#include "../VectorEngine/Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 
 void ManualFlywheel() {
+  extern Robot_Telemetry ricky;
+  int power =
+      (fabs(1828 - ricky.CurrentYAxis) + fabs(1828 - ricky.CurrentXAxis)) /
+          1828 * 100 +
+      40;
+
   if (Controller1.ButtonB.pressing()) {
-    Flywheel1.setVelocity(100, percent);
-    Flywheel2.setVelocity(100, percent);
+    Flywheel1.setVelocity(power, percent);
+    Flywheel2.setVelocity(power, percent);
   }
 
   if (Controller1.ButtonA.pressing()) {
