@@ -20,18 +20,18 @@ void ManualFlywheel() {
   Flywheel1.spin(forward);
   Flywheel2.spin(forward);
 
-  if(Controller1.ButtonX.pressing()){
-    while(Controller1.ButtonX.pressing()){
+  if (Controller1.ButtonX.pressing()) {
+    while (Controller1.ButtonX.pressing()) {
       Flywheel1.spin(reverse);
       Flywheel2.spin(reverse);
 
       Flywheel1.setVelocity(10, percent);
       Flywheel1.setVelocity(10, percent);
     }
-    else{
+    else {
       Flywheel1.setVelocity(0, percent);
       Flywheel2.setVelocity(0, percent);
-        
+
       Flywheel1.spin(forward);
       Flywheel2.spin(forward);
     }
@@ -42,9 +42,6 @@ void ManualFlywheel() {
   } else {
     Trigger.set(false);
   }
-<<<<<<< Updated upstream
-
-=======
 }
 
 void FlywheelVelocity(int velocity) {
@@ -61,5 +58,4 @@ void TriggerPulse(int pulses) {
     Trigger.set(false);
     vex::task::sleep(2000);
   }
->>>>>>> Stashed changes
 }
