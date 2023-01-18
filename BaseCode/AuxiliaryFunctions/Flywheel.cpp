@@ -8,33 +8,32 @@ void ManualFlywheel() {
           1828 * 100 +
       40;
 
-  if (Controller1.ButtonB.pressing()) {
+  if (Controller1.ButtonB.pressing()) { // spin up flywheel
     Flywheel1.setVelocity(power, percent);
     Flywheel2.setVelocity(power, percent);
   }
 
-  if (Controller1.ButtonA.pressing()) {
+  if (Controller1.ButtonA.pressing()) { // spin down flywheel
     Flywheel1.setVelocity(0, percent);
     Flywheel2.setVelocity(0, percent);
   }
   Flywheel1.spin(forward);
   Flywheel2.spin(forward);
 
-  if (Controller1.ButtonX.pressing()) {
+  if (Controller1.ButtonX.pressing()) { // reverse flywheel to unstick
     while (Controller1.ButtonX.pressing()) {
       Flywheel1.spin(reverse);
       Flywheel2.spin(reverse);
 
-      Flywheel1.setVelocity(10, percent);
-      Flywheel1.setVelocity(10, percent);
+      Flywheel1.setVelocity(20, percent);
+      Flywheel1.setVelocity(20, percent);
     }
-    else {
-      Flywheel1.setVelocity(0, percent);
-      Flywheel2.setVelocity(0, percent);
 
-      Flywheel1.spin(forward);
-      Flywheel2.spin(forward);
-    }
+    Flywheel1.setVelocity(0, percent);
+    Flywheel2.setVelocity(0, percent);
+
+    Flywheel1.spin(forward);
+    Flywheel2.spin(forward);
   }
 
   if (Controller1.ButtonL1.pressing()) {
@@ -44,14 +43,14 @@ void ManualFlywheel() {
   }
 }
 
-void FlywheelVelocity(int velocity) {
+void FlywheelVelocity(int velocity) { // set flywheel velocity
   Flywheel1.setVelocity(velocity, percent);
   Flywheel2.setVelocity(velocity, percent);
   Flywheel1.spin(forward);
   Flywheel2.spin(forward);
 }
 
-void TriggerPulse(int pulses) {
+void TriggerPulse(int pulses) { // trigger pulses
   for (int i = 0; i < pulses; i++) {
     Trigger.set(true);
     vex::task::sleep(500);

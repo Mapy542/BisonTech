@@ -12,9 +12,10 @@
 3 = flywheel(v)
 4 = trigger(p) pulse count
 */
-double test_route[][5] = {{1, 400.0, 400.0, 180.0, 1.0}, // move to 400 400
+double test_route[][5] = {{0, 230, 230, 180},
+                          {1, 400.0, 400.0, 180.0, 1.0}, // move to 400 400
                           {4, 2, 0, 0, 0},               // pulse trigger twice
-                          {1, 200.0, 200.0, 180.0, 1.0}};
+                          {1, 300.0, 300.0, 180.0, 1.0}};
 
 int LengthGetter(
     double routine[][5]) { // returns the length of the given 2d array
@@ -28,9 +29,11 @@ void AutonomousIndexer(double routine[][5]) {
       if (routine[i][3] == 0) { // write style 0 = overwrite, 1 = add
         ricky.CurrentXAxis = routine[i][1];
         ricky.CurrentYAxis = routine[i][2];
+        Gyroscope.setHeading(routine[i][3], degrees);
       } else if (routine[i][3] == 1) {
         ricky.CurrentXAxis += routine[i][1];
         ricky.CurrentYAxis += routine[i][2];
+        Gyroscope.setHeading(routine[i][3], degrees);
       }
     }
     if (routine[i][0] == 1) { // simple destination
@@ -54,12 +57,9 @@ void AutonomousIndexer(double routine[][5]) {
   }
 }
 
-int AutonomousRoutineDeamon() { // Main engine loop
-  while (true) {
-    AutonomousIndexer(test_route); // runs through the given routine
-
-    vex::task::sleep(50);
-  }
+int AutonomousRoutineDeamon() {  // Main engine loop
+  AutonomousIndexer(test_route); // runs through the given routine
+  return 1;
 };
 /*
 void SkillsRun() {

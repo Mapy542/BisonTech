@@ -40,13 +40,10 @@ void MotorVectorEngine() { // main calculation loop
   ////////////////WORK OUT CONVERSIONS/////////////////////// from mm/s and
   /// deg/s to percent rpm
   // rpower is 2x x and y power because wheel alignment
-  ricky.SetXVelocity +=
-      fmod(ricky.TargetXVelocity - ricky.CurrentXVelocity,
-           ricky.MaxAcceleration); // fmod is a modulo function for doubles
-  ricky.SetYVelocity += fmod(ricky.TargetYVelocity - ricky.CurrentYVelocity,
-                             ricky.MaxAcceleration);
-  ricky.SetRVelocity += fmod(ricky.TargetRVelocity - ricky.CurrentRVelocity,
-                             ricky.MaxAcceleration);
+  ricky.SetXVelocity += (ricky.TargetXVelocity - ricky.SetXVelocity) /
+                        2; // fmod is a modulo function for doubles
+  ricky.SetYVelocity += (ricky.TargetYVelocity - ricky.SetYVelocity) / 2;
+  ricky.SetRVelocity += (ricky.TargetRVelocity - ricky.SetRVelocity) / 4;
 
   DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity, 1);
 }
@@ -62,7 +59,7 @@ void Direct_Vector_Generator() {
     ricky.TargetRVelocity = 0;
   } else {
     double TangentialDist =
-        ricky.CurrentThetaValue * 3.14159265359 * 370 / 180.0;
+        FromGyro(ricky.TargetTheta) * 3.14159265359 * 370 / 180.0;
     if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
             fabs((TangentialDist)) &&
         fabs((ricky.TargetYAxis - ricky.CurrentYAxis)) <

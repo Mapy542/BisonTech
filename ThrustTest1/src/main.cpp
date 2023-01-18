@@ -34,18 +34,25 @@ int onauton_autonomous_0() {
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
     printf(", ");
-    printf("%.6f", ricky.CurrentXVelocity);
+    printf("%.6f", ricky.CurrentThetaValue);
+    printf(", Target Velocity: ");
+    printf("%.6f", ricky.TargetXVelocity);
     printf(", ");
-    printf("%.6f", ricky.CurrentYVelocity);
+    printf("%.6f", ricky.TargetYVelocity);
+    printf(", ");
+    printf("%.6f", ricky.TargetRVelocity);
+    //printf("%.6f", ricky.CurrentYVelocity);
     printf("\n");
 
-    wait(500,msec);
+    vex::task::sleep(100);
   }
 return 0;
 }
 
 // Driver Control
 int ondriver_drivercontrol_0() {
+  ricky.CurrentXAxis = 230;
+  ricky.CurrentYAxis = 220;
   while (true) {
     HeadlessManualDriveTrainControl();
     ManualIntake();
@@ -58,9 +65,6 @@ int ondriver_drivercontrol_0() {
 // Initalization
 int whenStarted1() {
   Gyroscope.startCalibration();
-  //Set_Offset(3355.0, 230.0);
-  //PreviousTheta = 180;
-
   FL.setStopping(brake);
   RL.setStopping(brake);
   FR.setStopping(brake);
