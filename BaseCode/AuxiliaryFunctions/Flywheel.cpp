@@ -20,9 +20,27 @@ void ManualFlywheel() {
   Flywheel1.spin(forward);
   Flywheel2.spin(forward);
 
+  if(Controller1.ButtonX.pressing()){
+    while(Controller1.ButtonX.pressing()){
+      Flywheel1.spin(reverse);
+      Flywheel2.spin(reverse);
+
+      Flywheel1.setVelocity(10, percent);
+      Flywheel1.setVelocity(10, percent);
+    }
+    else{
+      Flywheel1.setVelocity(0, percent);
+      Flywheel2.setVelocity(0, percent);
+        
+      Flywheel1.spin(forward);
+      Flywheel2.spin(forward);
+    }
+  }
+
   if (Controller1.ButtonL1.pressing()) {
     Trigger.set(true);
   } else {
     Trigger.set(false);
   }
+
 }
