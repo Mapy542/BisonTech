@@ -42,5 +42,24 @@ void ManualFlywheel() {
   } else {
     Trigger.set(false);
   }
+<<<<<<< Updated upstream
 
+=======
+}
+
+void FlywheelVelocity(int velocity) {
+  Flywheel1.setVelocity(velocity, percent);
+  Flywheel2.setVelocity(velocity, percent);
+  Flywheel1.spin(forward);
+  Flywheel2.spin(forward);
+}
+
+void TriggerPulse(int pulses) {
+  for (int i = 0; i < pulses; i++) {
+    Trigger.set(true);
+    vex::task::sleep(500);
+    Trigger.set(false);
+    vex::task::sleep(2000);
+  }
+>>>>>>> Stashed changes
 }

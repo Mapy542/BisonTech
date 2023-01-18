@@ -27,6 +27,7 @@ Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
 // Autonomousv2
 int onauton_autonomous_0() {
   vex::task Vector_Engine(Engine);
+  vex::task Autonoma(AutonomousRoutineDeamon);
   //vex::task autonoma_sequence(ThrustTest);
   while(true){
     printf("%.6f", ricky.CurrentXAxis);

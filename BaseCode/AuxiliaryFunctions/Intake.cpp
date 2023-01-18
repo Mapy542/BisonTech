@@ -10,3 +10,8 @@ void ManualIntake() {
   }
   Intake.spin(forward);
 }
+
+void IntakeVelocity(int velocity) {
+  Intake.setVelocity(velocity, percent);
+  Intake.spin(forward);
+}

@@ -6,6 +6,7 @@
 #include "vex.h"
 
 /*
+0 = odometer overwrite (x,y,w) write style 0 = overwrite, 1 = add
 1 = simple destination(x,y,r,s)
 2 = intake(v) velocity
 3 = flywheel(v)
@@ -16,12 +17,40 @@ double test_route[][5] = {{1, 400.0, 400.0, 180.0, 1.0}, // move to 400 400
                           {1, 200.0, 200.0, 180.0, 1.0}};
 
 int LengthGetter(
-    double routine[][5]) { // returns the length of the given routine
+    double routine[][5]) { // returns the length of the given 2d array
   return sizeof(routine) / sizeof(double) / 5;
 }
 
 void AutonomousIndexer(double routine[][5]) {
+  extern Robot_Telemetry ricky;
   for (int i = 0; i < LengthGetter(routine); i++) {
+    if (routine[i][0] == 0) {   // odometer overwrite
+      if (routine[i][3] == 0) { // write style 0 = overwrite, 1 = add
+        ricky.CurrentXAxis = routine[i][1];
+        ricky.CurrentYAxis = routine[i][2];
+      } else if (routine[i][3] == 1) {
+        ricky.CurrentXAxis += routine[i][1];
+        ricky.CurrentYAxis += routine[i][2];
+      }
+    }
+    if (routine[i][0] == 1) { // simple destination
+      ricky.TargetXAxis = routine[i][1];
+      ricky.TargetYAxis = routine[i][2];
+      ricky.TargetTheta = routine[i][3];
+      ricky.TargetSpeed = routine[i][4];
+      vex::task::sleep(250);
+      while (
+          ricky.EngineBusy &&
+          !ricky.TravelImpeded) { // wait for the engine to finish or get stuck
+        vex::task::sleep(50);
+      }
+    } else if (routine[i][0] == 2) { // set intake velocity
+      IntakeVelocity(routine[i][1]);
+    } else if (routine[i][0] == 3) { // set flywheel velocity
+      FlywheelVelocity(routine[i][1]);
+    } else if (routine[i][0] == 4) { // trigger pulse x times
+      TriggerPulse(int(routine[i][1]));
+    }
   }
 }
 
