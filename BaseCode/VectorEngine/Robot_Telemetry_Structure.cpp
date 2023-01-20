@@ -1,3 +1,4 @@
+#include "vex.h"
 #ifndef Robot_Telemetry_Structure_cpp_ // ensure that this file is only
                                        // included once
 #define Robot_Telemetry_Structure_cpp_
@@ -5,13 +6,12 @@
 struct Robot_Telemetry { // a java like class like thingy but just with
                          // a bunch of
                          // public fields
-
   // CONSTANTS////////////////////////////////////////////////
-  const double MaxAcceleration = 0.3; // percent per cycle
+  const double MaxAcceleration = 100; // percent per cycle
 
   const double XEncoderError = 0; // Used for encoder angular error correction
   const double YEncoderError =
-      0.575; // Used for encoder angular error correction
+      -0.575; // Used for encoder angular error correction
 
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
@@ -49,6 +49,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double TargetXVelocity = 0; // Used for vectoring engine
   double TargetYVelocity = 0; // mm/ms
   double TargetRVelocity = 0;
+  double TargetTotalVelocity = 0;
 
   double SetXVelocity = 0; // Used for calculating velocity change
   double SetYVelocity = 0;
@@ -57,12 +58,15 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   long BusyStartTime; // Used for acceleration and stuck detection
 
   // PATHING////////////////////////////////////////////////////////
-  int TravelStyle = 0; // 0 = direct line, 1 = arc x first, 2 = arc y first
 
   double TargetXAxis = 0; // Used to describe next waypoint
   double TargetYAxis = 0;
   double TargetTheta = 180;
   double TargetSpeed = 1;
+
+  double StartXAxis = 0; // Used to describe current waypoint
+  double StartYAxis = 0;
+  double StartTheta = 180;
 };
 
 /*void PrintTelemetry(Robot_Telemetry robo) {

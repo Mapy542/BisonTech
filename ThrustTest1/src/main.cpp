@@ -1,20 +1,3 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// FL                   motor         1               
-// RL                   motor         6               
-// FR                   motor         9               
-// RR                   motor         10              
-// Gyroscope            inertial      4               
-// y                    encoder       C, D            
-// x                    encoder       A, B            
-// Vision               vision        19              
-// Flywheel1            motor         2               
-// Flywheel2            motor         5               
-// Intake               motor         14              
-// Trigger              digital_out   H               
-// ---- END VEXCODE CONFIGURED DEVICES ----
 #include "vex.h"
 #include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 
@@ -26,9 +9,10 @@ Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
 
 // Autonomousv2
 int onauton_autonomous_0() {
-  vex::task Vector_Engine(Engine);
   vex::task Autonoma(AutonomousRoutineDeamon);
-  //vex::task autonoma_sequence(ThrustTest);
+  vex::task::sleep(100);
+  vex::task Vector_Engine(Engine);
+
   while(true){
     printf("%.6f", ricky.CurrentXAxis);
     printf(", ");
@@ -41,7 +25,12 @@ int onauton_autonomous_0() {
     printf("%.6f", ricky.TargetYVelocity);
     printf(", ");
     printf("%.6f", ricky.TargetRVelocity);
-    //printf("%.6f", ricky.CurrentYVelocity);
+    printf(", target:");
+    printf("%.6f", ricky.TargetXAxis);
+    printf(", ");
+    printf("%.6f", ricky.TargetYAxis);
+        printf(",:: ");
+    printf("%.6f", ricky.TargetTotalVelocity);
     printf("\n");
 
     vex::task::sleep(100);
@@ -51,15 +40,18 @@ return 0;
 
 // Driver Control
 int ondriver_drivercontrol_0() {
-  ricky.CurrentXAxis = 230;
+  onauton_autonomous_0();
+  /*ricky.CurrentXAxis = 230;
   ricky.CurrentYAxis = 220;
   while (true) {
     HeadlessManualDriveTrainControl();
     ManualIntake();
     ManualFlywheel();
     EncoderIntegral();
+    ManualEndgame();
     wait(5, msec);
-  }
+  }*/
+  return 1;
 }
 
 // Initalization
@@ -78,6 +70,9 @@ int whenStarted1() {
   Flywheel1.setVelocity(0,percent);
   Flywheel2.setVelocity(0,percent);
   Intake.setVelocity(100.0, percent);
+  ricky.CurrentXEncoderValue = x.rotation(degrees);
+  ricky.CurrentYEncoderValue = y.rotation(degrees);
+  EndgameLaunch.set(true);
   return 0;
 }
 

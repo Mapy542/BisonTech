@@ -22,7 +22,7 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
   ricky.CurrentThetaValue = Gyroscope.heading(degrees);
   ricky.CurrentTime = vex::timer::system();
 
-  /*// Dont do this but checks for 360 deg wrap
+  // Dont do this but checks for 360 deg wrap
   // then gives delta theta an average change amount.
   // may cause slight error
   if (DeltaTheta > 300.0) {
@@ -31,17 +31,11 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
   if (-300.0 > DeltaTheta) {
     DeltaTheta = -0.5;
   }
-  */
-
-  if (fabs(DeltaTheta) > 300) { // If heading wraps around 360 degrees, then
-                                // guess theta based on current speed
-    DeltaTheta = ricky.CurrentRVelocity *
-                 .7; //.7 is a guess of how much theta changes per rotation
-  }
 
   // Integrate encoder values to get odometry
   double XChange = (EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
-                       sin(Gyroscope.heading(degrees) * M_PI / 180) +
+                       sin(Gyroscope.heading(degrees) * M_PI / 180) *
+                       -1 + // y encoder x component is backwards
                    (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
                        cos(Gyroscope.heading(degrees) * M_PI / 180) *
                        ricky.EncoderTicksPerMM;

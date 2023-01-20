@@ -1,3 +1,4 @@
+#include "AuxiliaryFunctions\Endgame.cpp"
 #include "AuxiliaryFunctions\Flywheel.cpp"
 #include "AuxiliaryFunctions\Intake.cpp"
 #include "VectorEngine\Engine.cpp"
@@ -12,35 +13,36 @@
 3 = flywheel(v)
 4 = trigger(p) pulse count
 */
-double test_route[][5] = {{0, 230, 230, 180},
-                          {1, 400.0, 400.0, 180.0, 1.0}, // move to 400 400
-                          {4, 2, 0, 0, 0},               // pulse trigger twice
-                          {1, 300.0, 300.0, 180.0, 1.0}};
+double test_route[][5] = {{0, 230, 230, 180, 0},
+                          {1, -900.0, 900.0, 180.0, 0.4}, // move to 400 400
+                          {4, 2, 0, 0, 0},                // pulse trigger twice
+                          {1, 230.0, 230.0, 180.0, 0.4}};
+int test_route_length = sizeof(test_route) / sizeof(double) / 5;
 
-int LengthGetter(
-    double routine[][5]) { // returns the length of the given 2d array
-  return sizeof(routine) / sizeof(double) / 5;
-}
-
-void AutonomousIndexer(double routine[][5]) {
+void AutonomousIndexer(double routine[][5], int length) {
   extern Robot_Telemetry ricky;
-  for (int i = 0; i < LengthGetter(routine); i++) {
-    if (routine[i][0] == 0) {   // odometer overwrite
-      if (routine[i][3] == 0) { // write style 0 = overwrite, 1 = add
+  for (int i = 0; i < length; i++) {
+    if (routine[i][0] == 0) { // odometer overwrite
+      printf("Odometer Overwrite \n");
+      if (routine[i][4] == 0) { // write style 0 = overwrite, 1 = add
         ricky.CurrentXAxis = routine[i][1];
         ricky.CurrentYAxis = routine[i][2];
         Gyroscope.setHeading(routine[i][3], degrees);
-      } else if (routine[i][3] == 1) {
+      } else if (routine[i][4] == 1) {
         ricky.CurrentXAxis += routine[i][1];
         ricky.CurrentYAxis += routine[i][2];
         Gyroscope.setHeading(routine[i][3], degrees);
       }
     }
     if (routine[i][0] == 1) { // simple destination
+      printf("Simple Destination \n");
       ricky.TargetXAxis = routine[i][1];
       ricky.TargetYAxis = routine[i][2];
       ricky.TargetTheta = routine[i][3];
       ricky.TargetSpeed = routine[i][4];
+      ricky.StartXAxis = ricky.CurrentXAxis;
+      ricky.StartYAxis = ricky.CurrentYAxis;
+      ricky.StartTheta = ricky.CurrentThetaValue;
       vex::task::sleep(250);
       while (
           ricky.EngineBusy &&
@@ -57,8 +59,10 @@ void AutonomousIndexer(double routine[][5]) {
   }
 }
 
-int AutonomousRoutineDeamon() {  // Main engine loop
-  AutonomousIndexer(test_route); // runs through the given routine
+int AutonomousRoutineDeamon() { // Main engine loop
+  extern int test_route_length;
+  AutonomousIndexer(test_route,
+                    test_route_length); // runs through the given routine
   return 1;
 };
 /*

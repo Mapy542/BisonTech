@@ -18,7 +18,7 @@ double RadialDistance(double Theta1, double Theta2) {
 
 // RadialDistance given theta1 is the gyro reading
 double FromGyro(double theta1) {
-  return RadialDistance(Gyroscope.heading(degrees), theta1);
+  return RadialDistance(Gyroscope.heading(degrees), theta1) * -1;
 }
 
 double AbsoluteCumulativeVelocity() {
@@ -40,12 +40,33 @@ void MotorVectorEngine() { // main calculation loop
   ////////////////WORK OUT CONVERSIONS/////////////////////// from mm/s and
   /// deg/s to percent rpm
   // rpower is 2x x and y power because wheel alignment
-  ricky.SetXVelocity += (ricky.TargetXVelocity - ricky.SetXVelocity) /
-                        2; // fmod is a modulo function for doubles
-  ricky.SetYVelocity += (ricky.TargetYVelocity - ricky.SetYVelocity) / 2;
-  ricky.SetRVelocity += (ricky.TargetRVelocity - ricky.SetRVelocity) / 4;
+  double DeltaXVelocity =
+      (ricky.TargetXVelocity -
+       ricky.SetXVelocity); // find change in velocity percent
+  if (DeltaXVelocity >
+      ricky.MaxAcceleration) { // if change is greater than max acceleration
+    DeltaXVelocity = ricky.MaxAcceleration; // limit change to max acceleration
+  } else if (DeltaXVelocity < -ricky.MaxAcceleration) {
+    DeltaXVelocity = -ricky.MaxAcceleration;
+  }
+  ricky.SetXVelocity += DeltaXVelocity; // fmod is a modulo function for doubles
+  double DeltaYVelocity = (ricky.TargetYVelocity - ricky.SetYVelocity);
+  if (DeltaYVelocity > ricky.MaxAcceleration) {
+    DeltaYVelocity = ricky.MaxAcceleration;
+  } else if (DeltaYVelocity < -ricky.MaxAcceleration) {
+    DeltaYVelocity = -ricky.MaxAcceleration;
+  }
+  ricky.SetYVelocity += DeltaYVelocity;
+  double DeltaRVelocity = (ricky.TargetRVelocity - ricky.SetRVelocity);
+  if (DeltaRVelocity > ricky.MaxAcceleration) {
+    DeltaRVelocity = ricky.MaxAcceleration;
+  } else if (DeltaRVelocity < -ricky.MaxAcceleration) {
+    DeltaRVelocity = -ricky.MaxAcceleration;
+  }
+  ricky.SetRVelocity += DeltaRVelocity;
 
-  DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity, 1);
+  DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity,
+              ricky.TargetTotalVelocity);
 }
 
 void Direct_Vector_Generator() {
@@ -59,7 +80,7 @@ void Direct_Vector_Generator() {
     ricky.TargetRVelocity = 0;
   } else {
     double TangentialDist =
-        FromGyro(ricky.TargetTheta) * 3.14159265359 * 370 / 180.0;
+        FromGyro(ricky.TargetTheta) * 3.14159265359 * 370 / 180.0 / 3;
     if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
             fabs((TangentialDist)) &&
         fabs((ricky.TargetYAxis - ricky.CurrentYAxis)) <
@@ -73,14 +94,16 @@ void Direct_Vector_Generator() {
           100.0 * ((ricky.TargetXAxis - ricky.CurrentXAxis) /
                    fabs((TangentialDist))); // scale x to x over tangential
       ricky.TargetRVelocity =
-          50.0; // scale r to 50% as r is 200% more powerful than x and y.
+          copysign(50.0, TangentialDist); // scale r to 50% as r is 200% more
+                                          // powerful than x and y.
 
     } else if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
                fabs((ricky.TargetYAxis -
                      ricky.CurrentYAxis))) { // scale given x is the limiting
                                              // factor
 
-      ricky.TargetYVelocity = 100.0;
+      ricky.TargetYVelocity =
+          copysign(100.0, (ricky.TargetYAxis - ricky.CurrentYAxis));
       ricky.TargetXVelocity =
           100.0 * ((ricky.TargetXAxis - ricky.CurrentXAxis) /
                    fabs((ricky.TargetYAxis - ricky.CurrentYAxis)));
@@ -92,22 +115,34 @@ void Direct_Vector_Generator() {
       ricky.TargetYVelocity =
           100.0 * ((ricky.TargetYAxis - ricky.CurrentYAxis) /
                    fabs((ricky.TargetXAxis - ricky.CurrentXAxis)));
-      ricky.TargetXVelocity = 100.0;
+      ricky.TargetXVelocity =
+          copysign(100.0, (ricky.TargetXAxis - ricky.CurrentXAxis));
       ricky.TargetRVelocity =
           50.0 *
           ((TangentialDist) / fabs((ricky.TargetXAxis - ricky.CurrentXAxis)));
     }
+    double RampDown = ((fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) +
+                        fabs((ricky.TargetYAxis - ricky.CurrentYAxis))) +
+                       fabs((TangentialDist))) *
+                      0.15;
+    // printf("%.6f", RampDown);
+    // printf("\n");
+    RampDown = (RampDown * RampDown + 150.0) /
+               1000.0; // 15 defines the floor or minimum value for
+                       // ramp down. At min, 15% of max speed.
+    if (1.0 < RampDown) {
+      RampDown = 1.0;
+    }
+    ricky.TargetTotalVelocity = ricky.TargetSpeed * RampDown;
   }
 }
 
 int Engine() { // Main engine loop
   while (true) {
-
     EncoderIntegral();         // Get odometry from encoders
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
     MotorVectorEngine();       // Calculate motor powers from inputs in
-                               // Robot_Telemetry structure
     vex::task::sleep(25);
   }
 };
