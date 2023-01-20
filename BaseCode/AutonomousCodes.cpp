@@ -14,8 +14,8 @@
 4 = trigger(p) pulse count
 */
 double test_route[][5] = {{0, 230, 230, 180, 0},
-                          {1, -900.0, 900.0, 180.0, 0.4}, // move to 400 400
-                          {4, 2, 0, 0, 0},                // pulse trigger twice
+                          {1, 900.0, 900.0, 90.0, 0.4}, // move to 400 400
+                          {4, 2, 0, 0, 0},              // pulse trigger twice
                           {1, 230.0, 230.0, 180.0, 0.4}};
 int test_route_length = sizeof(test_route) / sizeof(double) / 5;
 

@@ -3,24 +3,16 @@
 #include "vex.h"
 #include <cmath>
 
-// Radial Distance calculator. takes two degrees and returns the distance
-// between them will wrap around 360 degrees if needed
-double RadialDistance(double Theta1, double Theta2) {
-  double distance = Theta1 - Theta2;
-  if (distance > 180) {
-    distance -= 360;
-  } else if (distance < -180) {
-    distance += 360;
-  }
-
-  return distance;
-}
-
 // RadialDistance given theta1 is the gyro reading
-double FromGyro(double theta1) {
-  return RadialDistance(Gyroscope.heading(degrees), theta1) * -1;
+float FromGyro(double r) {
+  double DegreeDiff = 0;
+  if (fabs((Gyroscope.heading(degrees) - r)) > 180.0) {
+    DegreeDiff = ((Gyroscope.heading(degrees) - r) - 359.0) * -1.0;
+  } else {
+    DegreeDiff = Gyroscope.heading(degrees) - r;
+  }
+  return DegreeDiff;
 }
-
 double AbsoluteCumulativeVelocity() {
   extern Robot_Telemetry ricky;
   return fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
@@ -36,10 +28,6 @@ void MotorVectorEngine() { // main calculation loop
   } else {
     ricky.EngineBusy = false;
   }
-
-  ////////////////WORK OUT CONVERSIONS/////////////////////// from mm/s and
-  /// deg/s to percent rpm
-  // rpower is 2x x and y power because wheel alignment
   double DeltaXVelocity =
       (ricky.TargetXVelocity -
        ricky.SetXVelocity); // find change in velocity percent
@@ -49,7 +37,7 @@ void MotorVectorEngine() { // main calculation loop
   } else if (DeltaXVelocity < -ricky.MaxAcceleration) {
     DeltaXVelocity = -ricky.MaxAcceleration;
   }
-  ricky.SetXVelocity += DeltaXVelocity; // fmod is a modulo function for doubles
+  ricky.SetXVelocity += DeltaXVelocity;
   double DeltaYVelocity = (ricky.TargetYVelocity - ricky.SetYVelocity);
   if (DeltaYVelocity > ricky.MaxAcceleration) {
     DeltaYVelocity = ricky.MaxAcceleration;
@@ -65,22 +53,36 @@ void MotorVectorEngine() { // main calculation loop
   }
   ricky.SetRVelocity += DeltaRVelocity;
 
-  DriveMotors(ricky.SetXVelocity, ricky.SetYVelocity, ricky.SetRVelocity,
-              ricky.TargetTotalVelocity);
+  // current X and y represent global heading based on field.
+  // now convert back to local heading based on robot rotation (inverse of
+  // odometry)
+  ricky.DriveXPower =
+      (ricky.SetYVelocity * sin(Gyroscope.heading(degrees) * M_PI / 180) +
+       ricky.SetXVelocity * cos(Gyroscope.heading(degrees) * M_PI / 180)) *
+      -1; // why must this be flipped? dunno
+  ricky.DriveYPower =
+      (ricky.SetYVelocity * cos(Gyroscope.heading(degrees) * M_PI / 180) +
+       ricky.SetXVelocity * sin(Gyroscope.heading(degrees) * M_PI / 180)) *
+      -1;
+
+  DriveMotors(ricky.DriveXPower, ricky.DriveYPower, ricky.SetRVelocity,
+              ricky.TargetTotalVelocity); // send to motor driver
 }
 
-void Direct_Vector_Generator() {
+void Direct_Vector_Generator() { // calculate direct vector to target coords
   extern Robot_Telemetry ricky;
-  if (fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < 5 &&
-      fabs(ricky.TargetYAxis - ricky.CurrentYAxis) < 5 &&
+  if (fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < ricky.DistanceTolerance &&
+      fabs(ricky.TargetYAxis - ricky.CurrentYAxis) < ricky.DistanceTolerance &&
       fabs(ricky.TargetTheta - ricky.CurrentThetaValue) <
-          2) { // within 10mm or 4deg tolerance stop robot to prevent over tune
+          ricky.AngleTolerance) { // within tolerance stop robot to prevent over
+                                  // tune
     ricky.TargetXVelocity = 0;
     ricky.TargetYVelocity = 0;
-    ricky.TargetRVelocity = 0;
+    ricky.TargetRVelocity = 0; // set all velocities to 0 to stop robot
   } else {
     double TangentialDist =
-        FromGyro(ricky.TargetTheta) * 3.14159265359 * 370 / 180.0 / 3;
+        FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 / 180.0 /
+        3; // find tangential distance of wheels based on radius and heading
     if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
             fabs((TangentialDist)) &&
         fabs((ricky.TargetYAxis - ricky.CurrentYAxis)) <
@@ -127,9 +129,9 @@ void Direct_Vector_Generator() {
                       0.15;
     // printf("%.6f", RampDown);
     // printf("\n");
-    RampDown = (RampDown * RampDown + 150.0) /
-               1000.0; // 15 defines the floor or minimum value for
-                       // ramp down. At min, 15% of max speed.
+    RampDown = (RampDown * RampDown) /
+               500.0; // 15 defines the floor or minimum value for
+                      // ramp down. At min, 15% of max speed.
     if (1.0 < RampDown) {
       RampDown = 1.0;
     }
@@ -143,7 +145,7 @@ int Engine() { // Main engine loop
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
     MotorVectorEngine();       // Calculate motor powers from inputs in
-    vex::task::sleep(25);
+    vex::task::sleep(5);
   }
 };
 

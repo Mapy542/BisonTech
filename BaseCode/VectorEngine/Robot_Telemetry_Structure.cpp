@@ -9,9 +9,10 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   // CONSTANTS////////////////////////////////////////////////
   const double MaxAcceleration = 100; // percent per cycle
 
-  const double XEncoderError = 0; // Used for encoder angular error correction
+  const double XEncoderError =
+      1.60520825; // Used for encoder angular error correction
   const double YEncoderError =
-      -0.575; // Used for encoder angular error correction
+      0.575; // Used for encoder angular error correction
 
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
@@ -56,6 +57,9 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double SetRVelocity = 0;
 
   long BusyStartTime; // Used for acceleration and stuck detection
+
+  double DriveXPower = 0;
+  double DriveYPower = 0;
 
   // PATHING////////////////////////////////////////////////////////
 

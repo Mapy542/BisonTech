@@ -9,6 +9,9 @@ Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
 
 // Autonomousv2
 int onauton_autonomous_0() {
+    while (Gyroscope.isCalibrating()) { //REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
+    vex::task::sleep(50);
+  }
   vex::task Autonoma(AutonomousRoutineDeamon);
   vex::task::sleep(100);
   vex::task Vector_Engine(Engine);
@@ -18,19 +21,21 @@ int onauton_autonomous_0() {
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
     printf(", ");
-    printf("%.6f", ricky.CurrentThetaValue);
+    printf("%.6f", Gyroscope.heading(degrees));
     printf(", Target Velocity: ");
-    printf("%.6f", ricky.TargetXVelocity);
+    printf("%.6f", ricky.SetXVelocity);
     printf(", ");
-    printf("%.6f", ricky.TargetYVelocity);
+    printf("%.6f", ricky.SetYVelocity);
+    printf(", real:");
+       printf("%.6f", ricky.DriveXPower);
     printf(", ");
-    printf("%.6f", ricky.TargetRVelocity);
-    printf(", target:");
-    printf("%.6f", ricky.TargetXAxis);
+    printf("%.6f", ricky.DriveYPower);/*
+    printf(", converted");
+    printf("%.6f", ricky.DriveXPower);
     printf(", ");
-    printf("%.6f", ricky.TargetYAxis);
+    printf("%.6f", ricky.DriveYPower);
         printf(",:: ");
-    printf("%.6f", ricky.TargetTotalVelocity);
+    printf("%.6f", ricky.CurrentThetaValue);*/
     printf("\n");
 
     vex::task::sleep(100);

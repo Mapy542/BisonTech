@@ -33,17 +33,16 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
   }
 
   // Integrate encoder values to get odometry
-  double XChange = (EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
-                       sin(Gyroscope.heading(degrees) * M_PI / 180) *
-                       -1 + // y encoder x component is backwards
-                   (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
-                       cos(Gyroscope.heading(degrees) * M_PI / 180) *
-                       ricky.EncoderTicksPerMM;
-  double YChange = (EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
-                       cos(Gyroscope.heading(degrees) * M_PI / 180) +
-                   (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
-                       sin(Gyroscope.heading(degrees) * M_PI / 180) *
-                       ricky.EncoderTicksPerMM;
+  double XChange = ((EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
+                        sin(Gyroscope.heading(degrees) * M_PI / 180) +
+                    (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
+                        cos(Gyroscope.heading(degrees) * M_PI / 180)) *
+                   ricky.EncoderTicksPerMM;
+  double YChange = ((EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
+                        cos(Gyroscope.heading(degrees) * M_PI / 180) +
+                    (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
+                        sin(Gyroscope.heading(degrees) * M_PI / 180)) *
+                   ricky.EncoderTicksPerMM;
 
   ricky.CurrentXAxis += XChange; // accumulate change in position
   ricky.CurrentYAxis += YChange;
