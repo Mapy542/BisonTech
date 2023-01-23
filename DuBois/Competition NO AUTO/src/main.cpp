@@ -1,3 +1,38 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         5               
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// Roller               motor         19              
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         5               
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 #include "vex.h"
 #include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 
@@ -12,11 +47,11 @@ int onauton_autonomous_0() {
     while (Gyroscope.isCalibrating()) { //REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
     vex::task::sleep(50);
   }
-  vex::task Autonoma(AutonomousRoutineDeamon);
-  vex::task::sleep(100);
-  vex::task Vector_Engine(Engine);
+  //vex::task Autonoma(AutonomousRoutineDeamon);
+  //vex::task::sleep(100);
+  //vex::task Vector_Engine(Engine);
 
-  /*(while(true){
+  /*while(true){
     printf("%.6f", ricky.CurrentXAxis);
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
@@ -49,7 +84,7 @@ int ondriver_drivercontrol_0() {
   ricky.CurrentXAxis = 230;
   ricky.CurrentYAxis = 220;
   while (true) {
-    ManualDriveTrainControl();
+    HeadlessManualDriveTrainControl();
     ManualIntake();
     ManualFlywheel();
     EncoderIntegral();

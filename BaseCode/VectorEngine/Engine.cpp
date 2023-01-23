@@ -144,7 +144,7 @@ int Engine() { // Main engine loop
     EncoderIntegral();         // Get odometry from encoders
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
-    MotorVectorEngine();       // Calculate motor powers from inputs in
+    // MotorVectorEngine();       // Calculate motor powers from inputs in
     vex::task::sleep(5);
   }
 };

@@ -10,7 +10,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   const double MaxAcceleration = 100; // percent per cycle
 
   const double XEncoderError =
-      1.60520825; // Used for encoder angular error correction
+      0; // 1.60520825; // Used for encoder angular error correction
   const double YEncoderError =
       0.575; // Used for encoder angular error correction
 

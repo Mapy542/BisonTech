@@ -53,7 +53,7 @@ void FlywheelVelocity(int velocity) { // set flywheel velocity
 void TriggerPulse(int pulses) { // trigger pulses
   for (int i = 0; i < pulses; i++) {
     Trigger.set(true);
-    vex::task::sleep(500);
+    vex::task::sleep(750);
     Trigger.set(false);
     vex::task::sleep(2000);
   }

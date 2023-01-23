@@ -17,14 +17,11 @@ inertial Gyroscope = inertial(PORT4);
 encoder y = encoder(Brain.ThreeWirePort.C);
 encoder x = encoder(Brain.ThreeWirePort.A);
 motor Flywheel1 = motor(PORT2, ratio18_1, false);
-motor Flywheel2 = motor(PORT20, ratio18_1, false);
+motor Flywheel2 = motor(PORT5, ratio18_1, false);
 motor Intake = motor(PORT14, ratio18_1, false);
 digital_out Trigger = digital_out(Brain.ThreeWirePort.H);
 digital_out EndgameLaunch = digital_out(Brain.ThreeWirePort.G);
-/*vex-vision-config:begin*/
-vision Vision = vision (PORT19, 50);
-/*vex-vision-config:end*/
-motor Roller = motor(PORT18, ratio18_1, false);
+motor Roller = motor(PORT19, ratio18_1, false);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

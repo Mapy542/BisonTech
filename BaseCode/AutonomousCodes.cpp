@@ -1,6 +1,7 @@
 #include "AuxiliaryFunctions\Endgame.cpp"
 #include "AuxiliaryFunctions\Flywheel.cpp"
 #include "AuxiliaryFunctions\Intake.cpp"
+#include "AuxiliaryFunctions\Roller.cpp"
 #include "VectorEngine\Engine.cpp"
 
 //#include "VectorEngine\Engine.cpp"
@@ -14,9 +15,10 @@
 4 = trigger(p) pulse count
 */
 double test_route[][5] = {{0, 230, 230, 180, 0},
-                          {1, 900.0, 900.0, 90.0, 0.4}, // move to 400 400
-                          {4, 2, 0, 0, 0},              // pulse trigger twice
-                          {1, 230.0, 230.0, 180.0, 0.4}};
+                          {3, 100.0, 0.0, 0.0, 0.0},
+                          {5, 5, 0, 0, 0},
+                          {4, 2, 0, 0, 0},
+                          {3, 0.0, 0.0, 0.0, 0.0}};
 int test_route_length = sizeof(test_route) / sizeof(double) / 5;
 
 void AutonomousIndexer(double routine[][5], int length) {
@@ -55,6 +57,8 @@ void AutonomousIndexer(double routine[][5], int length) {
       FlywheelVelocity(routine[i][1]);
     } else if (routine[i][0] == 4) { // trigger pulse x times
       TriggerPulse(int(routine[i][1]));
+    } else if (routine[i][0] == 5) { // wait for x seconds
+      vex::task::sleep(int(routine[i][1] * 1000));
     }
   }
 }

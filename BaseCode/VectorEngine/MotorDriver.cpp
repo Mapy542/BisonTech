@@ -62,34 +62,20 @@ void ManualMotors() {
   }
 }
 
-// post condition: return the result of the x^2.2 function in desmos where x is
-// the joystick value
-int JoystickCubic(int joystickvalue) { return pow(joystickvalue, 3) / 200; }
-
 // headless manual control
-void HeadlessManualDriveTrainControl() {
+void ManualDriveTrainControl() {
   extern Robot_Telemetry ricky;
   // extern Robot_Telemetry ricky;
 
-  // x component is the horizontal movement of the joystick times the cosine of
-  // the gyro angle times pi over 180. the pi and 180 convert the ouput of sin
-  // and cos from degrees to radians i assume.
-  /*
-  //headless why u no work
-  double X_Speed = JoystickCubic(Controller1.Axis3.position()) *
-                       sin(Gyroscope.heading(degrees) * M_PI / 180) +
-                   JoystickCubic(Controller1.Axis4.position()) *
-                       cos(Gyroscope.heading(degrees) * M_PI / 180);
-  double Y_Speed = JoystickCubic(Controller1.Axis3.position()) *
-                       cos(Gyroscope.heading(degrees) * M_PI / 180) +
-                   JoystickCubic(Controller1.Axis4.position()) *
-                       sin(Gyroscope.heading(degrees) * M_PI / 180);*/
-  // non headless
-  double X_Speed = JoystickCubic(Controller1.Axis4.position());
-  double Y_Speed = JoystickCubic(Controller1.Axis3.position());
+  const float ForwardMultiplier = .8;
+  const float TranslateMultiplier = -.7;
+  const float TurnMultiplier = .4;
+
+  double X_Speed = Controller1.Axis1.position() * TranslateMultiplier;
+  double Y_Speed = Controller1.Axis3.position() * ForwardMultiplier;
   double R_Speed;
   if (!ricky.Override_Manual_R) {
-    R_Speed = Controller1.Axis1.position();
+    R_Speed = Controller1.Axis4.position() * TurnMultiplier;
   } else {
     R_Speed = ricky.Override_R_Speed;
   }
