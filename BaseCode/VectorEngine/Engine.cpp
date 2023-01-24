@@ -53,19 +53,13 @@ void MotorVectorEngine() { // main calculation loop
   }
   ricky.SetRVelocity += DeltaRVelocity;
 
-  // current X and y represent global heading based on field.
-  // now convert back to local heading based on robot rotation (inverse of
-  // odometry)
-  ricky.DriveXPower =
-      (ricky.SetYVelocity * sin(Gyroscope.heading(degrees) * M_PI / 180) +
-       ricky.SetXVelocity * cos(Gyroscope.heading(degrees) * M_PI / 180)) *
-      -1; // why must this be flipped? dunno
-  ricky.DriveYPower =
-      (ricky.SetYVelocity * cos(Gyroscope.heading(degrees) * M_PI / 180) +
-       ricky.SetXVelocity * sin(Gyroscope.heading(degrees) * M_PI / 180)) *
-      -1;
+  // convert to polar coordinates and rotate by difference of starting point and
+  // current theta
+  PolarTransformation(ricky.SetXVelocity, ricky.SetYVelocity,
+                      180 - ricky.CurrentThetaValue);
 
-  DriveMotors(ricky.DriveXPower, ricky.DriveYPower, ricky.SetRVelocity,
+  DriveMotors(ricky.TransformReturnX, ricky.TransformReturnY,
+              ricky.SetRVelocity,
               ricky.TargetTotalVelocity); // send to motor driver
 }
 

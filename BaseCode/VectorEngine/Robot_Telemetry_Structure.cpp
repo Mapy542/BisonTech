@@ -71,6 +71,12 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double StartXAxis = 0; // Used to describe current waypoint
   double StartYAxis = 0;
   double StartTheta = 180;
+
+  // POLAR TRANSFORMATION///////////////////////////////////////////////
+
+  double TransformReturnX; // Used for polar transformation
+  double TransformReturnY; // easier to return in the struc than to pass by
+                           // reference
 };
 
 /*void PrintTelemetry(Robot_Telemetry robo) {

@@ -1,22 +1,24 @@
-#include "vex.h"
 #include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
+#include "vex.h"
+
 
 using namespace vex;
 competition Competition;
 
-Robot_Telemetry ricky; //Pass data to functions via a global struct named ricky
-//seemed efficient i guess
+Robot_Telemetry ricky; // Pass data to functions via a global struct named ricky
+// seemed efficient i guess
 
 // Autonomousv2
 int onauton_autonomous_0() {
-    while (Gyroscope.isCalibrating()) { //REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
+  while (Gyroscope
+             .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
     vex::task::sleep(50);
   }
   vex::task Autonoma(AutonomousRoutineDeamon);
   vex::task::sleep(100);
   vex::task Vector_Engine(Engine);
 
-  /*(while(true){
+  while(true){
     printf("%.6f", ricky.CurrentXAxis);
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
@@ -27,25 +29,25 @@ int onauton_autonomous_0() {
     printf(", ");
     printf("%.6f", ricky.SetYVelocity);
     printf(", real:");
-       printf("%.6f", ricky.DriveXPower);
+    printf("%.6f", ricky.DriveXPower);
     printf(", ");
     printf("%.6f", ricky.DriveYPower);
     printf(", converted");
     printf("%.6f", ricky.DriveXPower);
     printf(", ");
     printf("%.6f", ricky.DriveYPower);
-        printf(",:: ");
+    printf(",:: ");
     printf("%.6f", ricky.CurrentThetaValue);
     printf("\n");
 
     vex::task::sleep(100);
-  }*/
+  }
 return 0;
 }
 
 // Driver Control
 int ondriver_drivercontrol_0() {
-  //onauton_autonomous_0();
+  // onauton_autonomous_0();
   ricky.CurrentXAxis = 230;
   ricky.CurrentYAxis = 220;
   while (true) {
@@ -73,8 +75,8 @@ int whenStarted1() {
   RR.setMaxTorque(100.0, percent);
   Flywheel1.setMaxTorque(100.0, percent);
   Flywheel2.setMaxTorque(100.0, percent);
-  Flywheel1.setVelocity(0,percent);
-  Flywheel2.setVelocity(0,percent);
+  Flywheel1.setVelocity(0, percent);
+  Flywheel2.setVelocity(0, percent);
   Intake.setVelocity(100.0, percent);
   ricky.CurrentXEncoderValue = x.rotation(degrees);
   ricky.CurrentYEncoderValue = y.rotation(degrees);
@@ -110,5 +112,3 @@ int main() {
 
   whenStarted1();
 }
-
-
