@@ -21,7 +21,7 @@ void DriveMotors(double x, double y, double r, double s) {
 }
 
 // Does the same thing but take joystick input.
-void ManualMotors() {
+/*void ManualMotors() {
   float ForwardMultiplier = .9;
   float TranslateMultiplier = .5;
   float TurnMultiplier = -.9;
@@ -60,7 +60,7 @@ void ManualMotors() {
     FR.stop();
     RR.stop();
   }
-}
+}*/
 
 // headless manual control
 void ManualDriveTrainControl() {

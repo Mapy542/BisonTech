@@ -19,10 +19,6 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   const float DistanceTolerance = 6; // mm
   const float AngleTolerance = 3;    // degrees
 
-  const double MaxRobotVelocity =
-      600 / 2 / EncoderTicksPerMM; // motors at 600 rpm / 2 because 45 deg then
-                                   // convert deg to mm theoretically 500
-                                   // mm/m???? might be bad
   // ODOMETRY//////////////////////////////////////////////////////////
   double CurrentXAxis = 0; // From Odometry systems
   double CurrentYAxis = 0;

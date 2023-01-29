@@ -13,11 +13,6 @@ float FromGyro(double r) {
   }
   return DegreeDiff;
 }
-double AbsoluteCumulativeVelocity() {
-  extern Robot_Telemetry ricky;
-  return fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
-         fabs(ricky.CurrentRVelocity);
-}
 
 void ProximityRamp() {
   extern Robot_Telemetry ricky;
