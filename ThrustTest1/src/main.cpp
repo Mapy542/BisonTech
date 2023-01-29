@@ -28,16 +28,8 @@ int onauton_autonomous_0() {
     printf("%.6f", ricky.SetXVelocity);
     printf(", ");
     printf("%.6f", ricky.SetYVelocity);
-    printf(", real:");
-    printf("%.6f", ricky.DriveXPower);
-    printf(", ");
-    printf("%.6f", ricky.DriveYPower);
-    printf(", converted");
-    printf("%.6f", ricky.DriveXPower);
-    printf(", ");
-    printf("%.6f", ricky.DriveYPower);
-    printf(",:: ");
-    printf("%.6f", ricky.CurrentThetaValue);
+    printf(", ramp:");
+    printf("%.6f", ricky.TargetTotalVelocity);
     printf("\n");
 
     vex::task::sleep(100);

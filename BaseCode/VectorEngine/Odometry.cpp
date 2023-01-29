@@ -2,7 +2,6 @@
 #include "Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 
-
 void EncoderIntegral() { // Update odometry from encoders by integrating encoder
                          // values
   extern Robot_Telemetry ricky; // Forces update every time
@@ -34,8 +33,9 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
     DeltaTheta = -0.5;
   }
 
-  // Integrate encoder values to get odometry
-  double XChange = ((EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
+  // Integrate encoder values to get odometry old method (holes in equations
+  // lead to loss)
+  /*double XChange = ((EncoderDeltaY - DeltaTheta * ricky.YEncoderError) *
                         sin(Gyroscope.heading(degrees) * M_PI / 180) +
                     (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
                         cos(Gyroscope.heading(degrees) * M_PI / 180)) *
@@ -44,7 +44,14 @@ void EncoderIntegral() { // Update odometry from encoders by integrating encoder
                         cos(Gyroscope.heading(degrees) * M_PI / 180) +
                     (EncoderDeltaX - DeltaTheta * ricky.XEncoderError) *
                         sin(Gyroscope.heading(degrees) * M_PI / 180)) *
-                   ricky.EncoderTicksPerMM;
+                   ricky.EncoderTicksPerMM;*/
+
+  // integrate encoder values to get odometry
+  PolarTransformation((EncoderDeltaX - DeltaTheta * ricky.XEncoderError),
+                      (EncoderDeltaY - DeltaTheta * ricky.YEncoderError),
+                      ricky.CurrentThetaValue);
+  double XChange = ricky.TransformReturnX * ricky.EncoderTicksPerMM;
+  double YChange = ricky.TransformReturnY * ricky.EncoderTicksPerMM;
 
   ricky.CurrentXAxis += XChange; // accumulate change in position
   ricky.CurrentYAxis += YChange;

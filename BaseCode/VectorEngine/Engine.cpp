@@ -19,6 +19,27 @@ double AbsoluteCumulativeVelocity() {
          fabs(ricky.CurrentRVelocity);
 }
 
+void ProximityRamp() {
+  extern Robot_Telemetry ricky;
+  double RampDown =
+      ((fabs(ricky.TargetXAxis - ricky.CurrentXAxis) +
+        fabs(ricky.TargetYAxis - ricky.CurrentYAxis)) +
+       fabs(FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 / 180.0)) *
+      0.15; // find total distance to target
+  RampDown = (RampDown * RampDown) / 6000.0 +
+             0.05; // i have no idea how this works at this point. no matter
+                   // how i change it it doesn't improve ramp performance
+                   // just over shoots.
+  if (RampDown > 1.0) { // if rampdown is greater than 1.0 then limit it to
+                        // 1.0 to prevent overdrive;
+    RampDown = 1.0;
+  }
+  ricky.TargetTotalVelocity =
+      ricky.TargetSpeed * RampDown; // set target
+                                    // velocity to
+                                    // target speed affected by rampdown
+}
+
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
   if (ricky.SetXVelocity != 0 || ricky.SetYVelocity != 0 ||
@@ -75,13 +96,12 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
     ricky.TargetRVelocity = 0; // set all velocities to 0 to stop robot
   } else {
     double TangentialDist =
-        FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 / 180.0 /
-        3; // find tangential distance of wheels based on radius and heading
-    if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
-            fabs((TangentialDist)) &&
-        fabs((ricky.TargetYAxis - ricky.CurrentYAxis)) <
-            fabs((TangentialDist))) { // if tangential distance is more than x
-                                      // and y distance
+        FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 /
+        180.0; // find tangential distance of wheels based on radius and heading
+    if ((fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < fabs(TangentialDist) &&
+         fabs(ricky.TargetYAxis - ricky.CurrentYAxis) < fabs(TangentialDist)) ||
+        ricky.Targeting) { // if tangential distance is more than x
+                           // and y distance or targeting is enabled
 
       ricky.TargetYVelocity =
           100.0 * ((ricky.TargetYAxis - ricky.CurrentYAxis) /
@@ -117,19 +137,17 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
           50.0 *
           ((TangentialDist) / fabs((ricky.TargetXAxis - ricky.CurrentXAxis)));
     }
-    double RampDown = ((fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) +
-                        fabs((ricky.TargetYAxis - ricky.CurrentYAxis))) +
-                       fabs((TangentialDist))) *
-                      0.15;
-    // printf("%.6f", RampDown);
-    // printf("\n");
-    RampDown = (RampDown * RampDown) /
-               500.0; // 15 defines the floor or minimum value for
-                      // ramp down. At min, 15% of max speed.
-    if (1.0 < RampDown) {
-      RampDown = 1.0;
+    ProximityRamp(); // ramp to target velocity
+    // limit velocities
+    if (fabs(ricky.TargetXVelocity) > 100) {
+      ricky.TargetXVelocity = 100;
     }
-    ricky.TargetTotalVelocity = ricky.TargetSpeed * RampDown;
+    if (fabs(ricky.TargetYVelocity) > 100) {
+      ricky.TargetYVelocity = 100;
+    }
+    if (fabs(ricky.TargetRVelocity) > 100) {
+      ricky.TargetRVelocity = 100;
+    }
   }
 }
 
@@ -138,7 +156,7 @@ int Engine() { // Main engine loop
     EncoderIntegral();         // Get odometry from encoders
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
-    // MotorVectorEngine();       // Calculate motor powers from inputs in
+    MotorVectorEngine();       // Calculate motor powers from inputs in
     vex::task::sleep(5);
   }
 };

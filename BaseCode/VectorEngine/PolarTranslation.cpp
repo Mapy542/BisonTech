@@ -9,7 +9,9 @@ double ToPolarMagnitude(double x, double y) {
 }
 
 double ToPolarAngle(double x, double y) {
-  double polarTheta = atan2(y, x); // Convert angle
+  double polarTheta = atan2(y, x) * 180.0 /
+                      M_PI; // Convert angle then back to degrees cause why
+                            // would cpp include degree functions by default.
   return polarTheta;
 }
 

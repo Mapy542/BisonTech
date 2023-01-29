@@ -16,8 +16,8 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
-  const float DistanceTolerance = 4; // mm
-  const float AngleTolerance = 2;    // degrees
+  const float DistanceTolerance = 6; // mm
+  const float AngleTolerance = 3;    // degrees
 
   const double MaxRobotVelocity =
       600 / 2 / EncoderTicksPerMM; // motors at 600 rpm / 2 because 45 deg then
@@ -58,9 +58,6 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   long BusyStartTime; // Used for acceleration and stuck detection
 
-  double DriveXPower = 0;
-  double DriveYPower = 0;
-
   // PATHING////////////////////////////////////////////////////////
 
   double TargetXAxis = 0; // Used to describe next waypoint
@@ -71,6 +68,9 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double StartXAxis = 0; // Used to describe current waypoint
   double StartYAxis = 0;
   double StartTheta = 180;
+
+  bool Targeting = false; // flag for if the robot must prioritize rotation to a
+                          // target
 
   // POLAR TRANSFORMATION///////////////////////////////////////////////
 

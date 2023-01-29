@@ -15,10 +15,15 @@
 4 = trigger(p) pulse count
 */
 double test_route[][5] = {{0, 230, 230, 180, 0},
-                          {3, 100.0, 0.0, 0.0, 0.0},
-                          {5, 5, 0, 0, 0},
-                          {4, 2, 0, 0, 0},
-                          {3, 0.0, 0.0, 0.0, 0.0}};
+                          {1, 600, 600, 90, 0.5},
+                          //{1, -200, 300, 270, 0.7},
+                          {1, 230, 230, 180, 0.5}};
+
+/*{{0, 230, 230, 180, 0}, //fly from start
+    {3, 100.0, 0.0, 0.0, 0.0},
+    {5, 5, 0, 0, 0},
+    {4, 2, 0, 0, 0},
+    {3, 0.0, 0.0, 0.0, 0.0}};*/
 int test_route_length = sizeof(test_route) / sizeof(double) / 5;
 
 void AutonomousIndexer(double routine[][5], int length) {
