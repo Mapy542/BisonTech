@@ -35,6 +35,22 @@ void ProximityRamp() {
                                     // target speed affected by rampdown
 }
 
+double RotationalRamp() {
+  extern Robot_Telemetry ricky;
+  double RampDown =
+      (fabs(FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 / 180.0)) *
+      0.15; // find total distance to target
+  RampDown = (RampDown * RampDown) / 6000.0 +
+             0.05; // i have no idea how this works at this point. no matter
+                   // how i change it it doesn't improve ramp performance
+                   // just over shoots.
+  if (RampDown > 1.0) { // if rampdown is greater than 1.0 then limit it to
+                        // 1.0 to prevent overdrive;
+    RampDown = 1.0;
+  }
+  return RampDown;
+}
+
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
   if (ricky.SetXVelocity != 0 || ricky.SetYVelocity != 0 ||
@@ -77,6 +93,24 @@ void MotorVectorEngine() { // main calculation loop
   DriveMotors(ricky.TransformReturnX, ricky.TransformReturnY,
               ricky.SetRVelocity,
               ricky.TargetTotalVelocity); // send to motor driver
+}
+
+void FlywheelRotationEngine() { // main calculation loop
+  extern Robot_Telemetry ricky;
+  if (ricky.SetRVelocity != 0) { // if the robot is moving then update busy flag
+                                 // for further scripting
+    ricky.EngineBusy = true;
+  } else {
+    ricky.EngineBusy = false;
+  }
+  double DeltaRVelocity = (ricky.TargetRVelocity - ricky.SetRVelocity);
+  if (DeltaRVelocity > ricky.MaxAcceleration) {
+    DeltaRVelocity = ricky.MaxAcceleration;
+  } else if (DeltaRVelocity < -ricky.MaxAcceleration) {
+    DeltaRVelocity = -ricky.MaxAcceleration;
+  }
+  ricky.SetRVelocity += DeltaRVelocity;
+  ricky.Override_R_Speed = ricky.SetRVelocity;
 }
 
 void Direct_Vector_Generator() { // calculate direct vector to target coords
@@ -143,6 +177,55 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
     if (fabs(ricky.TargetRVelocity) > 100) {
       ricky.TargetRVelocity = 100;
     }
+  }
+}
+
+void Rotational_Vector_Generator() { // calculate direct vector to target coords
+  extern Robot_Telemetry ricky;
+  if (fabs(ricky.TargetTheta - ricky.CurrentThetaValue) <
+      ricky.AngleTolerance) { // within tolerance stop robot to prevent over
+                              // tune
+
+    ricky.TargetRVelocity = 0; // set all velocities to 0 to stop robot
+  } else {
+    double TangentialDist =
+        FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 /
+        180.0; // find tangential distance of wheels based on radius and heading
+    ricky.TargetRVelocity =
+        copysign(50.0, TangentialDist); // scale r to 50% as r is 200% more
+                                        // powerful than x and y.
+
+    ricky.TargetRVelocity *= RotationalRamp(); // ramp to target velocity
+    // limit velocities
+
+    if (fabs(ricky.TargetRVelocity) > 100) {
+      ricky.TargetRVelocity = 100;
+    }
+  }
+}
+
+void FlywheelAutoRotate() {
+  extern Robot_Telemetry ricky;
+
+  double X = ricky.GoalXPosition - ricky.CurrentXAxis;
+  double Y = ricky.CurrentYAxis - ricky.GoalYPosition;
+  double Angle = ToPolarAngle(X, Y) - 90 + ricky.LauncherAngleCompensation;
+  ricky.TargetTheta = Angle;
+}
+
+int DriverSupplementEngine() {
+  extern Robot_Telemetry ricky;
+  while (true) {
+    EncoderIntegral(); // Get odometry from encoders
+    if (Controller1.ButtonL2.pressing()) {
+      ricky.Override_Manual_R = true;
+      FlywheelAutoRotate();
+      Rotational_Vector_Generator();
+      FlywheelRotationEngine();
+    } else {
+      ricky.Override_Manual_R = false;
+    }
+    vex::task::sleep(5);
   }
 }
 

@@ -4,13 +4,13 @@
 // Combines motor powers over directions for multi-axis moving
 void DriveMotors(double x, double y, double r, double s) {
   if (!(x == 0.0) || (!(y == 0.0) || !(r == 0.0))) {
-    FL.setVelocity((((y * s + r * s) - x * s) + 0.0), percent);
+    FL.setVelocity((((y * s + r * s) - x * s)), percent);
     FL.spin(forward);
-    RL.setVelocity((((y * s + r * s) + x * s) + 0.0), percent);
+    RL.setVelocity((((y * s + r * s) + x * s)), percent);
     RL.spin(forward);
-    FR.setVelocity((((y * s - r * s) + x * s) - 0.0), percent);
+    FR.setVelocity((((y * s - r * s) + x * s)), percent);
     FR.spin(forward);
-    RR.setVelocity((((y * s - r * s) - x * s) - 0.0), percent);
+    RR.setVelocity((((y * s - r * s) - x * s)), percent);
     RR.spin(forward);
   } else {
     FL.stop();

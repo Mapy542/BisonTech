@@ -40,15 +40,24 @@ return 0;
 // Driver Control
 int ondriver_drivercontrol_0() {
   // onauton_autonomous_0();
+    while (Gyroscope
+             .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
+    vex::task::sleep(50);
+  }
+  Gyroscope.setHeading(180, degrees);
   ricky.CurrentXAxis = 230;
   ricky.CurrentYAxis = 220;
+  vex::task Engine(DriverSupplementEngine);
   while (true) {
     ManualDriveTrainControl();
     ManualIntake();
     ManualFlywheel();
-    EncoderIntegral();
     ManualEndgame();
     ManualRoller();
+        printf("%.6f", ricky.CurrentXAxis);
+    printf(", ");
+    printf("%.6f", ricky.CurrentYAxis);
+    printf("\n ");
     wait(5, msec);
   }
   return 1;

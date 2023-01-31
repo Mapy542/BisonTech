@@ -73,6 +73,18 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double TransformReturnX; // Used for polar transformation
   double TransformReturnY; // easier to return in the struc than to pass by
                            // reference
+
+  // Location Power
+  // Flywheel////////////////////////////////////////////////////////////
+
+  const float FlywheelMin = 0.4;        // flywheel min speed
+  const float FlywheelMax = 1.0;        // flywheel max speed
+  const int GoalXPosition = -18 * 25.4; // 18 inches
+  const int GoalYPosition = 122 * 25.4; // 10' 3"
+  const int MaximumFlywheelDistance =
+      140 * 25.4; //  12' 0" maximum possible distance from goal
+
+  const int LauncherAngleCompensation = 5; // 0 degrees
 };
 
 /*void PrintTelemetry(Robot_Telemetry robo) {
