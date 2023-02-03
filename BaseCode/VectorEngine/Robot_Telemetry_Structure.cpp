@@ -16,8 +16,8 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
-  const float DistanceTolerance = 6; // mm
-  const float AngleTolerance = 3;    // degrees
+  const float DistanceTolerance = 5; // mm
+  const float AngleTolerance = 2;    // degrees
 
   // ODOMETRY//////////////////////////////////////////////////////////
   double CurrentXAxis = 0; // From Odometry systems
@@ -26,7 +26,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double CurrentXEncoderValue = 0; // Used for encoder odometry
                                    // integration(calculus)
   double CurrentYEncoderValue = 0;
-  double CurrentThetaValue = 180;
+  double CurrentThetaValue = 270;
 
   double CurrentXVelocity = 0; // Used for vectoring engine
   double CurrentYVelocity = 0;
@@ -77,14 +77,15 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   // Location Power
   // Flywheel////////////////////////////////////////////////////////////
 
-  const float FlywheelMin = 0.4;        // flywheel min speed
-  const float FlywheelMax = 1.0;        // flywheel max speed
-  const int GoalXPosition = -18 * 25.4; // 18 inches
-  const int GoalYPosition = 122 * 25.4; // 10' 3"
-  const int MaximumFlywheelDistance =
-      140 * 25.4; //  12' 0" maximum possible distance from goal
+  int SetFlywheelSpeed = 0; // Used for flywheel control
+  // const float FlywheelMin = 0.4;        // flywheel min speed
+  // const float FlywheelMax = 1.0;        // flywheel max speed
+  // const int GoalXPosition = -18 * 25.4; // 18 inches
+  // const int GoalYPosition = 122 * 25.4; // 10' 3"
+  // const int MaximumFlywheelDistance =
+  //   140 * 25.4; //  12' 0" maximum possible distance from goal
 
-  const int LauncherAngleCompensation = 5; // 0 degrees
+  // const int LauncherAngleCompensation = 5; // 0 degrees
 };
 
 /*void PrintTelemetry(Robot_Telemetry robo) {
