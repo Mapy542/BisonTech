@@ -94,3 +94,34 @@ void TriggerPulse(int pulses) { // trigger pulses
     vex::task::sleep(2000);
   }
 }
+
+int FlywheelPID() { //flywheel velocity PID
+  extern Robot_Telemetry ricky;
+  while (true) {
+    int Error = ricky.SetFlywheelSpeed - Flywheel1.velocity(percent); //calculate errors
+    
+    ricky.FlywheelTotalError += Error; //calculate total error
+    if(ricky.FlywheelTotalError > 100) {
+      ricky.FlywheelTotalError = 100;
+    }else if (ricky.FlywheelTotalError < -100) {
+      ricky.FlywheelTotalError = -100;
+    }
+    
+    int Derivative = Error - ricky.FlywheelLastError; //calculate derivative
+
+    ricky.FlywheelLastError = Error; //set last error 
+
+    int FlywheelPower = (ricky.FlywheelKp * Error) + (ricky.FlywheelKi * ricky.FlywheelTotalError) + (ricky.FlywheelKd * Derivative); //calculate power
+    if(FlywheelPower > 100) {
+      FlywheelPower = 100;
+    }else if (FlywheelPower < -100) {
+      FlywheelPower = -100;
+    }
+
+    double voltage = (double)FlywheelPower * 12 / 100; //calculate voltage from percentage
+    Flywheel1::spin(forward, voltage, volts);
+    Flywheel2::spin(forward, voltage, volts);
+
+    vex::task::sleep(5);
+  }
+};

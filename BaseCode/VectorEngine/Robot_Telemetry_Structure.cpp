@@ -77,7 +77,17 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   // Location Power
   // Flywheel////////////////////////////////////////////////////////////
 
-  int SetFlywheelSpeed = 0; // Used for flywheel control
+  int FlywheelTargetVelocity = 0; //percent
+
+  const float FlywheelP = 0.4; //PID P control
+  const float FlywheelI = 0.0; //PID I control
+  const float FlywheelD = 0.0; //PID D control
+
+  int FlywheelLastError = 0; // Used for PID control
+  int FlywheelTotalError = 0; // Used for PID control
+
+
+
   // const float FlywheelMin = 0.4;        // flywheel min speed
   // const float FlywheelMax = 1.0;        // flywheel max speed
   // const int GoalXPosition = -18 * 25.4; // 18 inches

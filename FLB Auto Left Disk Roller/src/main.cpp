@@ -17,6 +17,7 @@ int onauton_autonomous_0() {
   vex::task Autonoma(AutonomousRoutineDeamon);
   vex::task::sleep(100);
   vex::task Vector_Engine(Engine);
+  vex::task FlywheelControl(FlywheelPID);
 
  while(true){
     printf("%.6f", ricky.CurrentXAxis);
@@ -44,6 +45,7 @@ int ondriver_drivercontrol_0() {
              .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
     vex::task::sleep(50);
   }
+  vex::task FlywheelControl(FlywheelPID);
   //Gyroscope.setHeading(180, degrees);
   //ricky.CurrentXAxis = 230;
   //ricky.CurrentYAxis = 220;
