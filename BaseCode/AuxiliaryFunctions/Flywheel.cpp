@@ -65,13 +65,37 @@ void ManualFlywheel() {
   }
 }
 
+void ManualFlywheelPID() {
+  extern Robot_Telemetry ricky;
+
+  // int power = LocationBasedFlywheelPower(); // get flywheel power based on
+  // distance from goal
+
+  if (Controller1.ButtonB.pressing()) { // spin up flywheel
+    ricky.FlywheelTargetVelocity = 80;
+  }
+
+  if (Controller1.ButtonY.pressing()) { // spin up flywheel
+    ricky.FlywheelTargetVelocity = 50;
+  }
+  if (Controller1.ButtonX.pressing()) {  // spin up flywheel
+ricky.FlywheelTargetVelocity = 100;
+  }
+
+  if (Controller1.ButtonA.pressing()) { // spin down flywheel
+ricky.FlywheelTargetVelocity = 00;
+  }
+  
+  if (Controller1.ButtonL1.pressing()) {
+    Trigger.set(true);
+  } else {
+    Trigger.set(false);
+  }
+}
+
 void FlywheelVelocity(int velocity) { // set flywheel velocity
   extern Robot_Telemetry ricky;
   ricky.SetFlywheelSpeed = velocity;
-  Flywheel1.setVelocity(velocity, percent);
-  Flywheel2.setVelocity(velocity, percent);
-  Flywheel1.spin(forward);
-  Flywheel2.spin(forward);
 }
 
 void TriggerPulse(int pulses) { // trigger pulses

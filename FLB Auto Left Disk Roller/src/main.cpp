@@ -53,14 +53,9 @@ int ondriver_drivercontrol_0() {
   while (true) {
     ManualDriveTrainControl();
     ManualIntake();
-    ManualFlywheel();
+    ManualFlywheelPID();
     ManualEndgame();
     ManualRoller();
-        printf("%.6f", ricky.CurrentXAxis);
-    printf(", ");
-    printf("%.6f", ricky.CurrentYAxis);
-    printf("\n ");
-    wait(5, msec);
   }
   return 1;
 }
