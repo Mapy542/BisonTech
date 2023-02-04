@@ -8,7 +8,6 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-controller Controller1 = controller(primary);
 motor FL = motor(PORT1, ratio6_1, false);
 motor RL = motor(PORT6, ratio6_1, false);
 motor FR = motor(PORT9, ratio6_1, true);
@@ -25,6 +24,7 @@ digital_out EndgameLaunch = digital_out(Brain.ThreeWirePort.G);
 vision Vision = vision (PORT19, 50);
 /*vex-vision-config:end*/
 motor Roller = motor(PORT18, ratio18_1, false);
+controller Controller1 = controller(primary);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

@@ -42,22 +42,6 @@ void ManualFlywheel() {
   Flywheel1.spin(forward);
   Flywheel2.spin(forward);
 
-  /*if (Controller1.ButtonX.pressing()) { // reverse flywheel to unstick
-    while (Controller1.ButtonX.pressing()) {
-      Flywheel1.spin(reverse);
-      Flywheel2.spin(reverse);
-
-      Flywheel1.setVelocity(20, percent);
-      Flywheel1.setVelocity(20, percent);
-    }
-
-    Flywheel1.setVelocity(0, percent);
-    Flywheel2.setVelocity(0, percent);
-
-    Flywheel1.spin(forward);
-    Flywheel2.spin(forward);
-  }*/
-
   if (Controller1.ButtonL1.pressing()) {
     Trigger.set(true);
   } else {
@@ -78,14 +62,14 @@ void ManualFlywheelPID() {
   if (Controller1.ButtonY.pressing()) { // spin up flywheel
     ricky.FlywheelTargetVelocity = 50;
   }
-  if (Controller1.ButtonX.pressing()) {  // spin up flywheel
-ricky.FlywheelTargetVelocity = 100;
+  if (Controller1.ButtonX.pressing()) { // spin up flywheel
+    ricky.FlywheelTargetVelocity = 100;
   }
 
   if (Controller1.ButtonA.pressing()) { // spin down flywheel
-ricky.FlywheelTargetVelocity = 00;
+    ricky.FlywheelTargetVelocity = 00;
   }
-  
+
   if (Controller1.ButtonL1.pressing()) {
     Trigger.set(true);
   } else {
@@ -95,7 +79,7 @@ ricky.FlywheelTargetVelocity = 00;
 
 void FlywheelVelocity(int velocity) { // set flywheel velocity
   extern Robot_Telemetry ricky;
-  ricky.SetFlywheelSpeed = velocity;
+  ricky.FlywheelTargetVelocity = velocity;
 }
 
 void TriggerPulse(int pulses) { // trigger pulses
@@ -107,7 +91,8 @@ void TriggerPulse(int pulses) { // trigger pulses
     return;
   }
   for (int i = 0; i < pulses; i++) {
-    while (fabs(Flywheel1.velocity(percent) - ricky.SetFlywheelSpeed) > 2) {
+    while (fabs(Flywheel1.velocity(percent) - ricky.FlywheelTargetVelocity) >
+           2) {
       Flywheel1.spin(forward);
       Flywheel2.spin(forward);
       vex::task::sleep(20);
@@ -119,33 +104,37 @@ void TriggerPulse(int pulses) { // trigger pulses
   }
 }
 
-int FlywheelPID() { //flywheel velocity PID
+int FlywheelPID() { // flywheel velocity PID
   extern Robot_Telemetry ricky;
   while (true) {
-    int Error = ricky.SetFlywheelSpeed - Flywheel1.velocity(percent); //calculate errors
-    
-    ricky.FlywheelTotalError += Error; //calculate total error
-    if(ricky.FlywheelTotalError > 100) {
+    int Error = ricky.FlywheelTargetVelocity -
+                Flywheel1.velocity(percent); // calculate errors
+
+    ricky.FlywheelTotalError += Error; // calculate total error
+    if (ricky.FlywheelTotalError > 100) {
       ricky.FlywheelTotalError = 100;
-    }else if (ricky.FlywheelTotalError < -100) {
+    } else if (ricky.FlywheelTotalError < -100) {
       ricky.FlywheelTotalError = -100;
     }
-    
-    int Derivative = Error - ricky.FlywheelLastError; //calculate derivative
 
-    ricky.FlywheelLastError = Error; //set last error 
+    int Derivative = Error - ricky.FlywheelLastError; // calculate derivative
 
-    int FlywheelPower = (ricky.FlywheelKp * Error) + (ricky.FlywheelKi * ricky.FlywheelTotalError) + (ricky.FlywheelKd * Derivative); //calculate power
-    if(FlywheelPower > 100) {
+    ricky.FlywheelLastError = Error; // set last error
+
+    int FlywheelPower = (ricky.FlywheelKp * Error) +
+                        (ricky.FlywheelKi * ricky.FlywheelTotalError) +
+                        (ricky.FlywheelKd * Derivative); // calculate power
+    if (FlywheelPower > 100) {
       FlywheelPower = 100;
-    }else if (FlywheelPower < -100) {
+    } else if (FlywheelPower < -100) {
       FlywheelPower = -100;
     }
 
-    double voltage = (double)FlywheelPower * 12 / 100; //calculate voltage from percentage
-    Flywheel1::spin(forward, voltage, volts);
-    Flywheel2::spin(forward, voltage, volts);
+    double voltage =
+        (double)FlywheelPower * 12 / 100; // calculate voltage from percentage
+    Flywheel1.spin(forward, voltage, volt);
+    Flywheel2.spin(forward, voltage, volt);
 
-    vex::task::sleep(5);
+    vex::task::sleep(25);
   }
-};
+}

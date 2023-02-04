@@ -20,49 +20,7 @@ void DriveMotors(double x, double y, double r, double s) {
   }
 }
 
-// Does the same thing but take joystick input.
-/*void ManualMotors() {
-  float ForwardMultiplier = .9;
-  float TranslateMultiplier = .5;
-  float TurnMultiplier = -.9;
-  int CorrectionMultiplier = 0;
-
-  if (!(Controller1.Axis3.position() == 0.0) ||
-      (!(Controller1.Axis1.position() == 0.0) ||
-       !(Controller1.Axis4.position() == 0.0))) {
-    FL.setVelocity((((Controller1.Axis3.position() * ForwardMultiplier +
-                      Controller1.Axis4.position() * TranslateMultiplier) -
-                     Controller1.Axis1.position() * TurnMultiplier) +
-                    CorrectionMultiplier),
-                   percent);
-    FL.spin(forward);
-    RL.setVelocity((((Controller1.Axis3.position() * ForwardMultiplier +
-                      Controller1.Axis4.position() * TranslateMultiplier) +
-                     Controller1.Axis1.position() * TurnMultiplier) +
-                    CorrectionMultiplier),
-                   percent);
-    RL.spin(forward);
-    FR.setVelocity((((Controller1.Axis3.position() * ForwardMultiplier -
-                      Controller1.Axis4.position() * TranslateMultiplier) +
-                     Controller1.Axis1.position() * TurnMultiplier) -
-                    CorrectionMultiplier),
-                   percent);
-    FR.spin(forward);
-    RR.setVelocity((((Controller1.Axis3.position() * ForwardMultiplier -
-                      Controller1.Axis4.position() * TranslateMultiplier) -
-                     Controller1.Axis1.position() * TurnMultiplier) -
-                    CorrectionMultiplier),
-                   percent);
-    RR.spin(forward);
-  } else {
-    FL.stop();
-    RL.stop();
-    FR.stop();
-    RR.stop();
-  }
-}*/
-
-// headless manual control
+// manual control
 void ManualDriveTrainControl() {
   extern Robot_Telemetry ricky;
   // extern Robot_Telemetry ricky;

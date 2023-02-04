@@ -3,8 +3,6 @@
 #include "AuxiliaryFunctions\Intake.cpp"
 #include "AuxiliaryFunctions\Roller.cpp"
 #include "VectorEngine\Engine.cpp"
-
-//#include "VectorEngine\Engine.cpp"
 #include "vex.h"
 
 /*
@@ -31,9 +29,26 @@ double flbleftdiskandrollerup[][5] = {
     {3, 0, 0, 0, 0}              // spindown flywheel
 };
 
-int flbleftdiskandrollerup_length = sizeof(flbleftdiskandroller) /
-                                    sizeof(double) /
-                                    5; // calculate length of array
+const int flbleftdiskandroller_length = sizeof(flbleftdiskandrollerup) /
+                                        sizeof(double) /
+                                        5; // calculate length of array
+
+double flbleftdiskandrollerdown[][5] = {
+    {0, -814, 230, 270, 0},      // set origin
+    {6, 0, 180, 0, 0},           // spin roller
+    {3, 73, 0, 0, 0},            // spin up flywheel
+    {1, -1900, 1220, 243.5, .7}, // move to middle of court
+    {4, 4, 0, 0, 0},             // shoot two disks
+    {3, 0, 0, 0, 0}              // spindown flywheel
+};
+
+const int flbleftdiskandrollerdown_length = sizeof(flbleftdiskandrollerdown) /
+                                            sizeof(double) /
+                                            5; // calculate length of array
+
+double flywheeltest[][5] = {
+    {0, 0, 0, 0, 0}, {3, 73, 0, 0, 0}, {5, 50, 0, 0, 0}};
+int flywheeltest_length = sizeof(flywheeltest) / sizeof(double) / 5;
 
 void AutonomousIndexer(double routine[][5], int length) {
   extern Robot_Telemetry ricky;

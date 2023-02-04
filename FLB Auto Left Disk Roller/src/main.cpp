@@ -40,7 +40,6 @@ return 0;
 
 // Driver Control
 int ondriver_drivercontrol_0() {
-  // onauton_autonomous_0();
     while (Gyroscope
              .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
     vex::task::sleep(50);
@@ -85,7 +84,7 @@ int whenStarted1() {
 void VEXcode_driver_task() {
   // Start the driver control tasks....
   vex::task drive0(ondriver_drivercontrol_0);
-  while (Competition.isDriverControl() && Competition.isEnabled()) {
+  while ((Competition.isDriverControl() && Competition.isEnabled())) {
     this_thread::sleep_for(10);
   }
   drive0.stop();
@@ -103,6 +102,7 @@ void VEXcode_auton_task() {
 }
 
 int main() {
+  printf("madeit");
   vexcodeInit();
   vex::competition::bStopTasksBetweenModes = false;
   Competition.autonomous(VEXcode_auton_task);
