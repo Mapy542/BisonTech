@@ -35,7 +35,7 @@ const int flbleftdiskandroller_length = sizeof(flbleftdiskandrollerup) /
 
 double flbleftdiskandrollerdown[][5] = {
     {0, -814, 230, 270, 0},      // set origin
-    {6, 0, 180, 0, 0},           // spin roller
+    {6, 0, -180, 0, 0},          // spin roller
     {3, 73, 0, 0, 0},            // spin up flywheel
     {1, -1900, 1220, 243.5, .7}, // move to middle of court
     {4, 4, 0, 0, 0},             // shoot two disks
@@ -46,9 +46,15 @@ const int flbleftdiskandrollerdown_length = sizeof(flbleftdiskandrollerdown) /
                                             sizeof(double) /
                                             5; // calculate length of array
 
-double flywheeltest[][5] = {
-    {0, 0, 0, 0, 0}, {3, 73, 0, 0, 0}, {5, 50, 0, 0, 0}};
-int flywheeltest_length = sizeof(flywheeltest) / sizeof(double) / 5;
+double flbleftrollerup[][5] = {{0, 814, 230, 90, 0}, // set origin
+                               {6, 0, 180, 0, 0}};
+
+const int flbleftrollerup_length = sizeof(flbleftrollerup) / sizeof(double) / 5;
+
+double flbleftrollerdown[][5] = {{0, 814, 230, 90, 0}, // set origin
+                                 {6, 0, -180, 0, 0}};
+const int flbleftrollerdown_length =
+    sizeof(flbleftrollerdown) / sizeof(double) / 5; // calculate length of array
 
 void AutonomousIndexer(double routine[][5], int length) {
   extern Robot_Telemetry ricky;
@@ -106,8 +112,7 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(
-      flbleftdiskandrollerup,
-      flbleftdiskandrollerup_length); // runs through the given routine
+  AutonomousIndexer(flbleftrollerdown,
+                    flbleftrollerdown_length); // runs through the given routine
   return 1;
 };

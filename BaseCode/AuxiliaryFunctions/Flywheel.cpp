@@ -126,15 +126,16 @@ int FlywheelPID() { // flywheel velocity PID
                         (ricky.FlywheelKd * Derivative); // calculate power
     if (FlywheelPower > 100) {
       FlywheelPower = 100;
-    } else if (FlywheelPower < -100) {
-      FlywheelPower = -100;
+    } else if (FlywheelPower < 0) {
+      FlywheelPower = 0;
     }
 
     double voltage =
         (double)FlywheelPower * 12 / 100; // calculate voltage from percentage
+    // printf("%.6f", voltage);
     Flywheel1.spin(forward, voltage, volt);
     Flywheel2.spin(forward, voltage, volt);
 
-    vex::task::sleep(25);
+    vex::task::sleep(5);
   }
 }
