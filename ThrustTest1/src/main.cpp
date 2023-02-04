@@ -10,6 +10,7 @@ Robot_Telemetry ricky; // Pass data to functions via a global struct named ricky
 
 // Autonomousv2
 int onauton_autonomous_0() {
+  extern Robot_Telemetry ricky;
   while (Gyroscope
              .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
     vex::task::sleep(50);
@@ -17,6 +18,7 @@ int onauton_autonomous_0() {
   vex::task Autonoma(AutonomousRoutineDeamon);
   vex::task::sleep(100);
   vex::task Vector_Engine(Engine);
+  vex::task flwe(FlywheelPID);
 
   while(true){
     printf("%.6f", ricky.CurrentXAxis);
@@ -31,7 +33,12 @@ int onauton_autonomous_0() {
     printf(", ramp:");
     printf("%.6f", ricky.TargetTotalVelocity);
     printf("\n");
-
+    if(ricky.AutoDone){
+      Autonoma.stop();
+      Vector_Engine.stop();
+      flwe.stop();
+      
+    }
     vex::task::sleep(100);
   }
 return 0;
@@ -43,21 +50,27 @@ int ondriver_drivercontrol_0() {
     while (Gyroscope
              .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
     vex::task::sleep(50);
-  }
-  Gyroscope.setHeading(180, degrees);
-  ricky.CurrentXAxis = 230;
-  ricky.CurrentYAxis = 220;
+             }
+vex::task flywghee(FlywheelPID);
   vex::task Engine(DriverSupplementEngine);
   while (true) {
     ManualDriveTrainControl();
     ManualIntake();
-    ManualFlywheel();
+    ManualFlywheelPID();
     ManualEndgame();
     ManualRoller();
-        printf("%.6f", ricky.CurrentXAxis);
+      printf("%.6f", ricky.CurrentXAxis);
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
-    printf("\n ");
+    printf(", ");
+    printf("%.6f", Gyroscope.heading(degrees));
+    printf(", Target Velocity: ");
+    printf("%.6f", ricky.TargetTheta);
+    printf(", ");
+    printf("%.6f", ricky.SetYVelocity);
+    printf(", ramp:");
+    printf("%.6f", ricky.TargetTotalVelocity);
+    printf("\n");
     wait(5, msec);
   }
   return 1;
@@ -107,7 +120,7 @@ void VEXcode_auton_task() {
 
 int main() {
   vexcodeInit();
-  vex::competition::bStopTasksBetweenModes = false;
+  vex::competition::bStopTasksBetweenModes = true;
   Competition.autonomous(VEXcode_auton_task);
   Competition.drivercontrol(VEXcode_driver_task);
 

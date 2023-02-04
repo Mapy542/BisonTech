@@ -21,12 +21,13 @@
 int test_route_length = sizeof(test_route) / sizeof(double) / 5;*/
 
 double flbleftdiskandrollerup[][5] = {
-    {0, -814, 230, 270, 0},      // set origin
-    {6, 0, 180, 0, 0},           // spin roller
-    {3, 73, 0, 0, 0},            // spin up flywheel
-    {1, -1900, 1220, 243.5, .7}, // move to middle of court
-    {4, 4, 0, 0, 0},             // shoot two disks
-    {3, 0, 0, 0, 0}              // spindown flywheel
+    {0, -814, 255, 270, 0}, // set origin
+    {1, -814, 220, 270, .7},
+    {6, 0, 180, 0, 0},         // spin roller
+    {3, 75, 0, 0, 0},          // spin up flywheel
+    {1, -1850, 1220, 244, .7}, // move to middle of court
+    {4, 2, 0, 0, 0},           // shoot two disks
+    {3, 0, 0, 0, 0}            // spindown flywheel
 };
 
 const int flbleftdiskandroller_length = sizeof(flbleftdiskandrollerup) /
@@ -36,9 +37,9 @@ const int flbleftdiskandroller_length = sizeof(flbleftdiskandrollerup) /
 double flbleftdiskandrollerdown[][5] = {
     {0, -814, 230, 270, 0},      // set origin
     {6, 0, -180, 0, 0},          // spin roller
-    {3, 73, 0, 0, 0},            // spin up flywheel
+    {3, 75, 0, 0, 0},            // spin up flywheel
     {1, -1900, 1220, 243.5, .7}, // move to middle of court
-    {4, 4, 0, 0, 0},             // shoot two disks
+    {4, 2, 0, 0, 0},             // shoot two disks
     {3, 0, 0, 0, 0}              // spindown flywheel
 };
 
@@ -108,11 +109,13 @@ void AutonomousIndexer(double routine[][5], int length) {
       }
     }
   }
+  ricky.AutoDone = true;
 }
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(flbleftrollerdown,
-                    flbleftrollerdown_length); // runs through the given routine
+  AutonomousIndexer(
+      flbleftdiskandrollerup,
+      flbleftdiskandroller_length); // runs through the given routine
   return 1;
 };

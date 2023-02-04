@@ -20,19 +20,23 @@ int onauton_autonomous_0() {
   vex::task FlywheelControl(FlywheelPID);
 
  while(true){
-    printf("%.6f", ricky.CurrentXAxis);
+    printf("%.6f", Flywheel1.velocity(percent));
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
     printf(", ");
     printf("%.6f", Gyroscope.heading(degrees));
     printf(", Target Velocity: ");
-    printf("%.6f", ricky.SetXVelocity);
+    printf("%.6f", (ricky.CurrentXVelocity + ricky.CurrentYVelocity + ricky.CurrentRVelocity)*1000);
     printf(", ");
     printf("%.6f", ricky.SetYVelocity);
     printf(", ramp:");
     printf("%.6f", ricky.TargetTotalVelocity);
     printf("\n");
-
+    if(ricky.AutoDone){
+      Autonoma.stop();
+      Vector_Engine.stop();
+      FlywheelControl.stop();
+    }
     vex::task::sleep(100);
   }
 return 0;
@@ -48,7 +52,7 @@ int ondriver_drivercontrol_0() {
   //Gyroscope.setHeading(180, degrees);
   //ricky.CurrentXAxis = 230;
   //ricky.CurrentYAxis = 220;
-  //vex::task Engine(DriverSupplementEngine);
+  vex::task Engine(DriverSupplementEngine);
   while (true) {
     ManualDriveTrainControl();
     ManualIntake();

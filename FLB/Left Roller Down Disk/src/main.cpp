@@ -20,7 +20,7 @@ int onauton_autonomous_0() {
   vex::task FlywheelControl(FlywheelPID);
 
  while(true){
-    printf("%.6f", ricky.CurrentXAxis);
+    printf("%.6f", Flywheel1.velocity(percent));
     printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
     printf(", ");

@@ -146,16 +146,29 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
   }
 }
 
+/*void Preliminary_Lock_Detect() {
+  extern Robot_Telemetry ricky;
+  if (((fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
+        fabs(ricky.CurrentRVelocity)) *
+           100 <
+       5)) {
+    ricky.TravelImpeded = true;
+  } else {
+    ricky.TravelImpeded = false;
+  }
+}*/
+
 int Engine() { // Main engine loop
   while (true) {
     EncoderIntegral();         // Get odometry from encoders
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
     MotorVectorEngine();       // Calculate motor powers from inputs in
+    // Preliminary_Lock_Detect(); // Detect if robot is stuck
     vex::task::sleep(5);
   }
 };
-/*
+
 double RotationalRamp() {
   extern Robot_Telemetry ricky;
   double RampDown =
@@ -218,8 +231,8 @@ void FlywheelAutoRotate() {
   extern Robot_Telemetry ricky;
 
   double X = ricky.GoalXPosition - ricky.CurrentXAxis;
-  double Y = ricky.CurrentYAxis - ricky.GoalYPosition;
-  double Angle = ToPolarAngle(X, Y) - 90 + ricky.LauncherAngleCompensation;
+  double Y = ricky.GoalYPosition - ricky.CurrentYAxis;
+  double Angle = ToPolarAngle(X, Y) + 180 + ricky.LauncherAngleCompensation;
   ricky.TargetTheta = Angle;
 }
 
@@ -238,4 +251,3 @@ int DriverSupplementEngine() {
     vex::task::sleep(5);
   }
 }
-*/

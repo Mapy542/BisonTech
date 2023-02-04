@@ -68,6 +68,8 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   bool Targeting = false; // flag for if the robot must prioritize rotation to a
                           // target
 
+  bool AutoDone = false; // flag for if the robot is done with the routine
+
   // POLAR TRANSFORMATION///////////////////////////////////////////////
 
   double TransformReturnX; // Used for polar transformation
@@ -80,20 +82,20 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   int FlywheelTargetVelocity = 0; // percent
 
   const float FlywheelKp = 1.9; // PID P control
-  const float FlywheelKi = 0.9; // PID I control
+  const float FlywheelKi = 1.2; // PID I control
   const float FlywheelKd = 1.2; // PID D control
 
   int FlywheelLastError = 0;  // Used for PID control
   int FlywheelTotalError = 0; // Used for PID control
 
-  // const float FlywheelMin = 0.4;        // flywheel min speed
-  // const float FlywheelMax = 1.0;        // flywheel max speed
-  // const int GoalXPosition = -18 * 25.4; // 18 inches
-  // const int GoalYPosition = 122 * 25.4; // 10' 3"
-  // const int MaximumFlywheelDistance =
-  //   140 * 25.4; //  12' 0" maximum possible distance from goal
+  const float FlywheelMin = 0.4;        // flywheel min speed
+  const float FlywheelMax = 1.0;        // flywheel max speed
+  const int GoalXPosition = -18 * 25.4; // 18 inches
+  const int GoalYPosition = 122 * 25.4; // 10' 3"
+  const int MaximumFlywheelDistance =
+      140 * 25.4; //  12' 0" maximum possible distance from goal
 
-  // const int LauncherAngleCompensation = 5; // 0 degrees
+  const int LauncherAngleCompensation = 10; // 0 degrees
 };
 
 #endif // end double define check

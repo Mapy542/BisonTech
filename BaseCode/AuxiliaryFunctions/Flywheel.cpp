@@ -60,7 +60,7 @@ void ManualFlywheelPID() {
   }
 
   if (Controller1.ButtonY.pressing()) { // spin up flywheel
-    ricky.FlywheelTargetVelocity = 50;
+    ricky.FlywheelTargetVelocity = 65;
   }
   if (Controller1.ButtonX.pressing()) { // spin up flywheel
     ricky.FlywheelTargetVelocity = 100;
