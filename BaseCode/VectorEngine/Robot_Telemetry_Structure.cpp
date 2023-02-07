@@ -81,9 +81,9 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   int FlywheelTargetVelocity = 0; // percent
 
-  const float FlywheelKp = 1.9; // PID P control
-  const float FlywheelKi = 1.2; // PID I control
-  const float FlywheelKd = 1.2; // PID D control
+  // fast changing PV should have a high Ki and low Kp
+  const float FlywheelLow[3] = {2.4, 0.6, 0.3}; // [P, I, D]
+  const float FlywheelHigh[3] = {0.8, 1, 0.7};  // [P, I, D]
 
   int FlywheelLastError = 0;  // Used for PID control
   int FlywheelTotalError = 0; // Used for PID control

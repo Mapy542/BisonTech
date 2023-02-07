@@ -15,40 +15,6 @@
   return (int)(power * 100);
 }*/
 
-void ManualFlywheel() {
-  extern Robot_Telemetry ricky;
-
-  // int power = LocationBasedFlywheelPower(); // get flywheel power based on
-  // distance from goal
-
-  if (Controller1.ButtonB.pressing()) { // spin up flywheel
-    Flywheel1.setVelocity(80, percent); // power, percent);
-    Flywheel2.setVelocity(80, percent); // power, percent);
-  }
-
-  if (Controller1.ButtonY.pressing()) { // spin up flywheel
-    Flywheel1.setVelocity(50, percent); // power, percent);
-    Flywheel2.setVelocity(50, percent); // power, percent);
-  }
-  if (Controller1.ButtonX.pressing()) {  // spin up flywheel
-    Flywheel1.setVelocity(100, percent); // power, percent);
-    Flywheel2.setVelocity(100, percent); // power, percent);
-  }
-
-  if (Controller1.ButtonA.pressing()) { // spin down flywheel
-    Flywheel1.setVelocity(0, percent);
-    Flywheel2.setVelocity(0, percent);
-  }
-  Flywheel1.spin(forward);
-  Flywheel2.spin(forward);
-
-  if (Controller1.ButtonL1.pressing()) {
-    Trigger.set(true);
-  } else {
-    Trigger.set(false);
-  }
-}
-
 void ManualFlywheelPID() {
   extern Robot_Telemetry ricky;
 
@@ -93,8 +59,6 @@ void TriggerPulse(int pulses) { // trigger pulses
   for (int i = 0; i < pulses; i++) {
     while (fabs(Flywheel1.velocity(percent) - ricky.FlywheelTargetVelocity) >
            2) {
-      Flywheel1.spin(forward);
-      Flywheel2.spin(forward);
       vex::task::sleep(20);
     }
     Trigger.set(true);
@@ -121,9 +85,19 @@ int FlywheelPID() { // flywheel velocity PID
 
     ricky.FlywheelLastError = Error; // set last error
 
-    int FlywheelPower = (ricky.FlywheelKp * Error) +
-                        (ricky.FlywheelKi * ricky.FlywheelTotalError) +
-                        (ricky.FlywheelKd * Derivative); // calculate power
+    float Kp, Ki, Kd;                        // set PID constants
+    if (ricky.FlywheelTargetVelocity > 70) { // Find tune from LUT
+      Kp = ricky.FlywheelHigh[0];
+      Ki = ricky.FlywheelHigh[1];
+      Kd = ricky.FlywheelHigh[2];
+    } else {
+      Kp = ricky.FlywheelLow[0];
+      Ki = ricky.FlywheelLow[1];
+      Kd = ricky.FlywheelLow[2];
+    }
+
+    int FlywheelPower = (Kp * Error) + (Ki * ricky.FlywheelTotalError) +
+                        (Kd * Derivative); // calculate power
     if (FlywheelPower > 100) {
       FlywheelPower = 100;
     } else if (FlywheelPower < 0) {

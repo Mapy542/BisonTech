@@ -2,6 +2,7 @@
 #include "AuxiliaryFunctions\Flywheel.cpp"
 #include "AuxiliaryFunctions\Intake.cpp"
 #include "AuxiliaryFunctions\Roller.cpp"
+#include "AuxiliaryFunctions\Vision.cpp"
 #include "VectorEngine\Engine.cpp"
 #include "vex.h"
 
