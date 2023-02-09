@@ -1,11 +1,12 @@
 #include "../VectorEngine/Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 
-/*int LocationBasedFlywheelPower() {
+int LocationBasedFlywheelPower() {
   extern Robot_Telemetry ricky;
-  float distance = fabs(fabs(ricky.GoalXPosition) - fabs(ricky.CurrentXAxis)) +
-                   fabs(ricky.CurrentYAxis - ricky.GoalYPosition);
-  double power = (double)distance / ricky.MaximumFlywheelDistance;
+  float distanceX = fabs(fabs(ricky.GoalXPosition) - fabs(ricky.CurrentXAxis));
+  float distanceY = fabs(ricky.CurrentYAxis - ricky.GoalYPosition);
+  float distanceD = ToPolarMagnitude(distanceX, distanceY);
+  double power = (double)distanceD / ricky.MaximumFlywheelDistance;
   if (power < ricky.FlywheelMin) {
     power = ricky.FlywheelMin;
   }
@@ -13,21 +14,21 @@
     power = ricky.FlywheelMax;
   }
   return (int)(power * 100);
-}*/
+}
 
 void ManualFlywheelPID() {
   extern Robot_Telemetry ricky;
 
-  // int power = LocationBasedFlywheelPower(); // get flywheel power based on
-  // distance from goal
+  //int power = LocationBasedFlywheelPower(); // get flywheel power based on distance from goal
 
   if (Controller1.ButtonB.pressing()) { // spin up flywheel
     ricky.FlywheelTargetVelocity = 80;
   }
 
   if (Controller1.ButtonY.pressing()) { // spin up flywheel
-    ricky.FlywheelTargetVelocity = 65;
+     ricky.FlywheelTargetVelocity = LocationBasedFlywheelPower();
   }
+
   if (Controller1.ButtonX.pressing()) { // spin up flywheel
     ricky.FlywheelTargetVelocity = 100;
   }
