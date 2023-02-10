@@ -37,7 +37,7 @@ void ProximityRamp() {
 
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
-  double DeltaXVelocity =
+  /*double DeltaXVelocity =
       (ricky.TargetXVelocity -
        ricky.SetXVelocity); // find change in velocity percent
   if (DeltaXVelocity >
@@ -60,15 +60,15 @@ void MotorVectorEngine() { // main calculation loop
   } else if (DeltaRVelocity < -ricky.MaxAcceleration) {
     DeltaRVelocity = -ricky.MaxAcceleration;
   }
-  ricky.SetRVelocity += DeltaRVelocity;
+  ricky.SetRVelocity += DeltaRVelocity;*/
 
   // convert to polar coordinates and rotate by difference of starting point and
   // current theta
-  PolarTransformation(ricky.SetXVelocity, ricky.SetYVelocity,
-                      180 - ricky.CurrentThetaValue);
+  EnginePolarTransformation(ricky.TargetXVelocity, ricky.TargetYVelocity,
+                            180 - ricky.CurrentThetaValue);
 
-  DriveMotors(ricky.TransformReturnX, ricky.TransformReturnY,
-              ricky.SetRVelocity,
+  DriveMotors(ricky.EngineTransformReturnX, ricky.EngineTransformReturnY,
+              ricky.TargetRVelocity,
               ricky.TargetTotalVelocity); // send to motor driver
 }
 
@@ -105,7 +105,7 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
 
     } else if (fabs((ricky.TargetXAxis - ricky.CurrentXAxis)) <
                fabs((ricky.TargetYAxis -
-                     ricky.CurrentYAxis))) { // scale given x is the limiting
+                     ricky.CurrentYAxis))) { // scale given y is the limiting
                                              // factor
 
       ricky.TargetYVelocity =
@@ -116,7 +116,7 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
       ricky.TargetRVelocity =
           50.0 *
           ((TangentialDist) / fabs((ricky.TargetYAxis - ricky.CurrentYAxis)));
-    } else { // scale given y is the limiting factor
+    } else { // scale given x is the limiting factor
 
       ricky.TargetYVelocity =
           100.0 * ((ricky.TargetYAxis - ricky.CurrentYAxis) /

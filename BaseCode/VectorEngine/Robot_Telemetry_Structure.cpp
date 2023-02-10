@@ -7,7 +7,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
                          // a bunch of
                          // public fields
   // CONSTANTS////////////////////////////////////////////////
-  const double MaxAcceleration = 100; // percent per cycle
+  // const double MaxAcceleration = 100; // percent per cycle
 
   const double XEncoderError =
       0; // 1.60520825; // Used for encoder angular error correction
@@ -16,8 +16,8 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
-  const float DistanceTolerance = 5; // mm
-  const float AngleTolerance = 2;    // degrees
+  const float DistanceTolerance = 4; // mm
+  const float AngleTolerance = 1;    // degrees
 
   // ODOMETRY//////////////////////////////////////////////////////////
   double CurrentXAxis = 0; // From Odometry systems
@@ -75,7 +75,11 @@ struct Robot_Telemetry { // a java like class like thingy but just with
 
   double TransformReturnX; // Used for polar transformation
   double TransformReturnY; // easier to return in the struc than to pass by
-                           // reference
+  // reference
+
+  double EngineTransformReturnX; // Used for polar
+                                 // transformation
+  double EngineTransformReturnY; // easier to return in the struc than to pass
 
   // Location Power
   // Flywheel////////////////////////////////////////////////////////////

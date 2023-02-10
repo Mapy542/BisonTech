@@ -36,3 +36,14 @@ void PolarTransformation(double x, double y,
                                                              // cartesian
   ricky.TransformReturnY = ToCartesianY(polarM, polarTheta);
 }
+void EnginePolarTransformation(
+    double x, double y,
+    double theta) { // Rotate a vector by theta degrees
+  extern Robot_Telemetry ricky;
+  double polarM = ToPolarMagnitude(x, y); // Convert to polar
+  double polarTheta = ToPolarAngle(x, y) + theta;
+  ricky.EngineTransformReturnX =
+      ToCartesianX(polarM, polarTheta); // Convert back to
+                                        // cartesian
+  ricky.EngineTransformReturnY = ToCartesianY(polarM, polarTheta);
+}

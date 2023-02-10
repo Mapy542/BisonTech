@@ -42,7 +42,9 @@ double bothrollers[][5] = {
     {6, 0, 180, 0, 0},       // spin roller
     //{7, -1880, 1220, 244, 0.7}, // midpoint dont hit barrier
     //{7, -2700, 1700, 190, 0.7}, // avoid outside
-    {1, -3090, 2700, 180, 0.7}, // goto next roller
+    {7, -3090, 2500, 270, 0.7}, // goto next roller but stay inside lines
+    {1, -3090, 2500, 180, 0.5}, // shpinmove
+    {1, -3110, 270, 180, 0.7},  //
     {6, 0, 180, 0, 0}           // spin roller
 };
 const int bothrollers_length = sizeof(bothrollers) / sizeof(double) / 5;
