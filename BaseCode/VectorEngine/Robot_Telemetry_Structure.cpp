@@ -60,6 +60,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   double TargetYAxis = 0;
   double TargetTheta = 180;
   double TargetSpeed = 1;
+  bool Destination = true; // flag for if the robot is going to stop at point
 
   double StartXAxis = 0; // Used to describe current waypoint
   double StartYAxis = 0;

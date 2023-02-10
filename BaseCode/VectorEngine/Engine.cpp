@@ -21,10 +21,10 @@ void ProximityRamp() {
         fabs(ricky.TargetYAxis - ricky.CurrentYAxis)) +
        fabs(FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 / 180.0)) *
       0.15; // find total distance to target
-  RampDown = (RampDown * RampDown) / 6000.0 +
-             0.05; // i have no idea how this works at this point. no matter
-                   // how i change it it doesn't improve ramp performance
-                   // just over shoots.
+  RampDown = (RampDown * RampDown) / 3000.0 +
+             0.1; // i have no idea how this works at this point. no matter
+                  // how i change it it doesn't improve ramp performance
+                  // just over shoots.
   if (RampDown > 1.0) { // if rampdown is greater than 1.0 then limit it to
                         // 1.0 to prevent overdrive;
     RampDown = 1.0;
@@ -37,13 +37,6 @@ void ProximityRamp() {
 
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
-  if (ricky.SetXVelocity != 0 || ricky.SetYVelocity != 0 ||
-      ricky.SetRVelocity != 0) { // if the robot is moving then update busy flag
-                                 // for further scripting
-    ricky.EngineBusy = true;
-  } else {
-    ricky.EngineBusy = false;
-  }
   double DeltaXVelocity =
       (ricky.TargetXVelocity -
        ricky.SetXVelocity); // find change in velocity percent
@@ -84,15 +77,17 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
   if (fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < ricky.DistanceTolerance &&
       fabs(ricky.TargetYAxis - ricky.CurrentYAxis) < ricky.DistanceTolerance &&
       fabs(ricky.TargetTheta - ricky.CurrentThetaValue) <
-          ricky.AngleTolerance) { // within tolerance stop robot to prevent over
-                                  // tune
+          ricky.AngleTolerance) { // within tolerance stop robot to prevent
+                                  // over tune
     ricky.TargetXVelocity = 0;
     ricky.TargetYVelocity = 0;
     ricky.TargetRVelocity = 0; // set all velocities to 0 to stop robot
+    ricky.EngineBusy = false;  // set engine to not busy
   } else {
-    double TangentialDist =
-        FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 /
-        180.0; // find tangential distance of wheels based on radius and heading
+    ricky.EngineBusy = true; // set engine to busy
+    double TangentialDist = FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 /
+                            180.0; // find tangential distance of wheels
+                                   // based on radius and heading
     if ((fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < fabs(TangentialDist) &&
          fabs(ricky.TargetYAxis - ricky.CurrentYAxis) < fabs(TangentialDist)) ||
         ricky.Targeting) { // if tangential distance is more than x
@@ -132,6 +127,7 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
           50.0 *
           ((TangentialDist) / fabs((ricky.TargetXAxis - ricky.CurrentXAxis)));
     }
+
     ProximityRamp(); // ramp to target velocity
     // limit velocities
     if (fabs(ricky.TargetXVelocity) > 100) {

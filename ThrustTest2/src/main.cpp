@@ -20,24 +20,24 @@ int onauton_autonomous_0() {
   vex::task FlywheelControl(FlywheelPID);
 
  while(true){
-    printf("%.6f", Flywheel1.velocity(percent));
-    /*printf(", ");
+    printf("%.6f",ricky.CurrentXAxis);
+    printf(", ");
     printf("%.6f", ricky.CurrentYAxis);
     printf(", ");
     printf("%.6f", Gyroscope.heading(degrees));
     printf(", Target Velocity: ");
-    printf("%.6f", (ricky.CurrentXVelocity + ricky.CurrentYVelocity + ricky.CurrentRVelocity)*1000);
+    printf("%.6f", ricky.SetXVelocity);
     printf(", ");
     printf("%.6f", ricky.SetYVelocity);
     printf(", ramp:");
-    printf("%.6f", ricky.TargetTotalVelocity);*/
+    printf("%.6f", ricky.TargetTotalVelocity);
     printf("\n");
     if(ricky.AutoDone){
       Autonoma.stop();
       Vector_Engine.stop();
       FlywheelControl.stop();
     }
-    vex::task::sleep(30);
+    vex::task::sleep(50);
   }
 return 0;
 }
