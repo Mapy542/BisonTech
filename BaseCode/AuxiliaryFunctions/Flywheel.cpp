@@ -3,7 +3,7 @@
 
 int LocationBasedFlywheelPower() {
   extern Robot_Telemetry ricky;
-  float distanceX = fabs(fabs(ricky.GoalXPosition) - fabs(ricky.CurrentXAxis));
+  float distanceX = fabs((ricky.GoalXPosition*=-1) - (ricky.CurrentXAxis*=-1));
   float distanceY = fabs(ricky.CurrentYAxis - ricky.GoalYPosition);
   float distanceD = sqrt(distanceX * distanceX + distanceY * distanceY);
   double power = (double)distanceD / ricky.MaximumFlywheelDistance;
