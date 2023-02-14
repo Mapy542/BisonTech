@@ -21,9 +21,9 @@ motor Intake = motor(PORT14, ratio18_1, false);
 digital_out Trigger = digital_out(Brain.ThreeWirePort.H);
 digital_out EndgameLaunch = digital_out(Brain.ThreeWirePort.G);
 /*vex-vision-config:begin*/
-signature Vision__DISK = signature (1, 1539, 1853, 1696, -4217, -3923, -4070, 2.5, 0);
+signature Vision__DISK = signature (1, 1403, 2029, 1716, -4583, -3981, -4282, 2, 0);
 signature Vision__SIG_2 = signature (2, 0, 0, 0, 0, 0, 0, 3, 0);
-vision Vision = vision (PORT19, 50, Vision__DISK, Vision__SIG_2);
+vision Vision = vision (PORT19, 15, Vision__DISK, Vision__SIG_2);
 /*vex-vision-config:end*/
 motor Roller = motor(PORT18, ratio18_1, false);
 controller Controller1 = controller(primary);

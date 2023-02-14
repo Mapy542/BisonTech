@@ -142,17 +142,17 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
   }
 }
 
-/*void Preliminary_Lock_Detect() {
+void Preliminary_Lock_Detect() {
   extern Robot_Telemetry ricky;
   if (((fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
         fabs(ricky.CurrentRVelocity)) *
            100 <
-       5)) {
+       ricky.StuckTolerance)) {
     ricky.TravelImpeded = true;
   } else {
     ricky.TravelImpeded = false;
   }
-}*/
+}
 
 int Engine() { // Main engine loop
   while (true) {
@@ -160,7 +160,7 @@ int Engine() { // Main engine loop
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
     MotorVectorEngine();       // Calculate motor powers from inputs in
-    // Preliminary_Lock_Detect(); // Detect if robot is stuck
+    Preliminary_Lock_Detect(); // Detect if robot is stuck
     vex::task::sleep(5);
   }
 };
@@ -189,14 +189,7 @@ void FlywheelRotationEngine() { // main calculation loop
   } else {
     ricky.EngineBusy = false;
   }
-  double DeltaRVelocity = (ricky.TargetRVelocity - ricky.SetRVelocity);
-  if (DeltaRVelocity > ricky.MaxAcceleration) {
-    DeltaRVelocity = ricky.MaxAcceleration;
-  } else if (DeltaRVelocity < -ricky.MaxAcceleration) {
-    DeltaRVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetRVelocity += DeltaRVelocity;
-  ricky.Override_R_Speed = ricky.SetRVelocity;
+  ricky.Override_R_Speed = ricky.TargetRVelocity;
 }
 
 void Rotational_Vector_Generator() { // calculate direct vector to target coords

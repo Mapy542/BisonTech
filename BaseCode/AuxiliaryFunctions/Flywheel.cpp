@@ -52,6 +52,7 @@ void FlywheelVelocity(int velocity) { // set flywheel velocity
 
 void TriggerPulse(int pulses) { // trigger pulses
   extern Robot_Telemetry ricky;
+  ricky.DiskCount -= pulses;
   if (pulses == 1) {
     Trigger.set(true);
     vex::task::sleep(750);

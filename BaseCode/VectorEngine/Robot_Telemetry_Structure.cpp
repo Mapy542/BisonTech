@@ -19,6 +19,8 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   const float DistanceTolerance = 4; // mm
   const float AngleTolerance = 1;    // degrees
 
+  const float StuckTolerance = 5; // mm/s?? (actual units unknown)
+
   // ODOMETRY//////////////////////////////////////////////////////////
   double CurrentXAxis = 0; // From Odometry systems
   double CurrentYAxis = 0;
@@ -101,6 +103,9 @@ struct Robot_Telemetry { // a java like class like thingy but just with
       140 * 25.4; //  12' 0" maximum possible distance from goal
 
   const int LauncherAngleCompensation = 10; // 0 degrees
+
+  int DiskCount = 2;         // Used for tracking disk count
+  bool DiskInIntake = false; // Used for tracking disk count
 };
 
 #endif // end double define check

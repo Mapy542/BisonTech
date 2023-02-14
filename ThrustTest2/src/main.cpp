@@ -1,3 +1,98 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         20              
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// Vision               vision        19              
+// Roller               motor         18              
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         20              
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// Vision               vision        19              
+// Roller               motor         18              
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         20              
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// Vision               vision        19              
+// Roller               motor         18              
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         20              
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// Vision               vision        19              
+// Roller               motor         18              
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// RL                   motor         6               
+// FR                   motor         9               
+// RR                   motor         10              
+// Gyroscope            inertial      4               
+// y                    encoder       C, D            
+// x                    encoder       A, B            
+// Flywheel1            motor         2               
+// Flywheel2            motor         20              
+// Intake               motor         14              
+// Trigger              digital_out   H               
+// EndgameLaunch        digital_out   G               
+// Vision               vision        19              
+// Roller               motor         18              
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
 #include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 #include "vex.h"
 
@@ -18,6 +113,7 @@ int onauton_autonomous_0() {
   vex::task::sleep(100);
   vex::task Vector_Engine(Engine);
   vex::task FlywheelControl(FlywheelPID);
+  vex::task DiskDetector(VisionDeamon);
 
  while(true){
     printf("%.6f",ricky.CurrentXAxis);
@@ -53,13 +149,16 @@ int ondriver_drivercontrol_0() {
   //ricky.CurrentXAxis = 230;
   //ricky.CurrentYAxis = 220;
   vex::task Engine(DriverSupplementEngine);
+  vex::task DiskDetector(VisionDeamon);
   while (true) {
     ManualDriveTrainControl();
     ManualIntake();
     ManualFlywheelPID();
     ManualEndgame();
     ManualRoller();
-        printf("%.6f", Flywheel1.velocity(percent));
+        printf("%.6f", (fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
+        fabs(ricky.CurrentRVelocity)) *
+           100);
         printf("\n");
   }
   return 1;
