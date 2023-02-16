@@ -6,15 +6,15 @@
 // RadialDistance given theta1 is the gyro reading
 float FromGyro(double r) {
   double DegreeDiff = 0;
-  if (fabs((Gyroscope.heading(degrees) - r)) > 180.0) {
-    DegreeDiff = ((Gyroscope.heading(degrees) - r) - 359.0) * -1.0;
+  if (fabs(Gyroscope.heading(degrees) - r) > 180.0) {
+    DegreeDiff = (Gyroscope.heading(degrees) - r - 359.0) * -1.0;
   } else {
     DegreeDiff = Gyroscope.heading(degrees) - r;
   }
   return DegreeDiff;
 }
 
-void ProximityRamp() {
+void ProximityRamp() { // ramp down to target speed based on distance to target
   extern Robot_Telemetry ricky;
   double RampDown =
       ((fabs(ricky.TargetXAxis - ricky.CurrentXAxis) +
@@ -85,7 +85,7 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
     ricky.EngineBusy = false;  // set engine to not busy
   } else {
     ricky.EngineBusy = true; // set engine to busy
-    double TangentialDist = FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 /
+    double TangentialDist = FromGyro(ricky.TargetTheta) * 3.14159265359 * 370 /
                             180.0; // find tangential distance of wheels
                                    // based on radius and heading
     if ((fabs(ricky.TargetXAxis - ricky.CurrentXAxis) < fabs(TangentialDist) &&
@@ -129,28 +129,38 @@ void Direct_Vector_Generator() { // calculate direct vector to target coords
     }
 
     ProximityRamp(); // ramp to target velocity
-    // limit velocities
-    if (fabs(ricky.TargetXVelocity) > 100) {
-      ricky.TargetXVelocity = 100;
-    }
-    if (fabs(ricky.TargetYVelocity) > 100) {
-      ricky.TargetYVelocity = 100;
-    }
-    if (fabs(ricky.TargetRVelocity) > 100) {
-      ricky.TargetRVelocity = 100;
-    }
   }
 }
 
-void Preliminary_Lock_Detect() {
+int Preliminary_Lock_Detect() { // detect if robot is stuck
   extern Robot_Telemetry ricky;
-  if (((fabs(ricky.CurrentXVelocity) + fabs(ricky.CurrentYVelocity) +
-        fabs(ricky.CurrentRVelocity)) *
-           100 <
-       ricky.StuckTolerance)) {
-    ricky.TravelImpeded = true;
-  } else {
-    ricky.TravelImpeded = false;
+  double LastX = ricky.CurrentXAxis;
+  double LastY = ricky.CurrentYAxis;
+  double LastTheta = ricky.CurrentThetaValue;
+  bool LastEngineBusy = ricky.EngineBusy;
+  while (true) {
+    if (ricky.EngineBusy && LastEngineBusy) {
+      if (fabs(LastX - ricky.CurrentXAxis) < ricky.StuckTolerance &&
+          fabs(LastY - ricky.CurrentYAxis) < ricky.StuckTolerance &&
+          fabs(LastTheta - ricky.CurrentThetaValue) < ricky.StuckTolerance &&
+          (ricky.TargetRVelocity != 0 || ricky.TargetXVelocity != 0 ||
+           ricky.TargetYVelocity != 0)) {
+        ricky.TravelImpeded = true;
+        printf("Stuck");
+      } else {
+        ricky.TravelImpeded = false;
+      }
+
+    } else if (!ricky.EngineBusy && LastEngineBusy) {
+      ricky.TravelImpeded = false; // if engine is not busy and was last time
+    } else if (ricky.EngineBusy && !LastEngineBusy) {
+      vex::task::sleep(1000); // wait 600ms to let the engine get going
+    }
+    LastX = ricky.CurrentXAxis;
+    LastY = ricky.CurrentYAxis;
+    LastTheta = ricky.CurrentThetaValue;
+    LastEngineBusy = ricky.EngineBusy;
+    vex::task::sleep(300); // check 3 times a second
   }
 }
 
@@ -160,7 +170,6 @@ int Engine() { // Main engine loop
     Direct_Vector_Generator(); // Calculate motor powers from inputs in
                                // Robot_Telemetry structure
     MotorVectorEngine();       // Calculate motor powers from inputs in
-    Preliminary_Lock_Detect(); // Detect if robot is stuck
     vex::task::sleep(5);
   }
 };

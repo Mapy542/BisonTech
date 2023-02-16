@@ -50,14 +50,13 @@ const int bothrollers_length = sizeof(bothrollers) / sizeof(double) / 5;
 
 double skills[][5] = {
     {0, -814, 255, 270, 0},    // initalize
-    {1, -814, 220, 270, 0.7},  // touch against roller
+    {1, -814, 225, 270, 0.7},  // touch against roller
     {6, 0, 360, 0, 0},         // spin 180 degrees to red
-    {1, -220, 814, 10, 0.7},   // move to next roller
+    {1, -340, 450, 350, 0.7},  // move to next roller
     {6, 0, 360, 0, 0},         // spin 180 degrees to red on second roller
-    {3, 70, 0, 0, 0},          // start flywheel
-    {1, -814, 1814, 275, 0.7}, // move to shoot disks
+    {3, 66, 0, 0, 0},          // start flywheel
+    {1, -814, 1814, 270, 0.7}, // move to shoot disks
     {4, 2, 0, 0, 0},           // shoot two disks
-    {}
 
 };
 const int skills_length = sizeof(skills) / sizeof(double) / 5;
@@ -83,6 +82,7 @@ void AutonomousIndexer(double routine[][5], int length) {
       }
     }
     if (routine[i][0] == 1) { // simple destination
+      printf("Destination");
       ricky.TargetXAxis = routine[i][1];
       ricky.TargetYAxis = routine[i][2];
       ricky.TargetTheta = routine[i][3];
@@ -98,18 +98,23 @@ void AutonomousIndexer(double routine[][5], int length) {
         vex::task::sleep(50);
       }
     } else if (routine[i][0] == 2) { // set intake velocity
+      printf("Intake");
       IntakeVelocity(routine[i][1]);
     } else if (routine[i][0] == 3) { // set flywheel velocity
+      printf("Flywheel");
       FlywheelVelocity(routine[i][1]);
     } else if (routine[i][0] == 4) { // trigger pulse x times
-      if (routine[i][2] == 1) {      // empty hopper
-        TriggerPulse(Ricky.DiskCount);
+      printf("Trigger");
+      if (routine[i][2] == 1) { // empty hopper
+        TriggerPulse(ricky.DiskCount);
       } else {
         TriggerPulse(int(routine[i][1]));
       }
     } else if (routine[i][0] == 5) { // wait for x seconds
+      printf("Wait");
       vex::task::sleep(int(routine[i][1] * 1000));
     } else if (routine[i][0] == 6) { // roller
+      printf("Roller");
       if (routine[i][1] == 0) {
         Roller.setVelocity(50, percent);
         Roller.spinFor(forward, routine[i][2], degrees, true);
@@ -118,6 +123,7 @@ void AutonomousIndexer(double routine[][5], int length) {
         Roller.spin(forward);
       }
     } else if (routine[i][0] == 7) { // waypoint
+      printf("Waypoint");
       ricky.TargetXAxis = routine[i][1];
       ricky.TargetYAxis = routine[i][2];
       ricky.TargetTheta = routine[i][3];
@@ -139,7 +145,7 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(bothrollers,
-                    bothrollers_length); // runs through the given routine
+  AutonomousIndexer(skills,
+                    skills_length); // runs through the given routine
   return 1;
 };
