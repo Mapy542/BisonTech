@@ -1,9 +1,9 @@
 #include "vex.h"
 
-//Get Odometry from encoders and gyroscope
-//POLL AS FAST AS POSSIBLE
-/* This is the function that polls the encoders and the gyroscope to get the absolute position of the
-robot. */
+// Get Odometry from encoders and gyroscope
+// POLL AS FAST AS POSSIBLE
+/* This is the function that polls the encoders and the gyroscope to get the
+absolute position of the robot. */
 void Poll_Absolute_Cords() {
   double DeltaTheta;
   double EncoderDeltaY;
@@ -34,12 +34,24 @@ void Poll_Absolute_Cords() {
   }
 
   globaldelta = fabs(EncoderDeltaX) + fabs(EncoderDeltaY);
-  CurrentXAxis = CurrentXAxis + ((EncoderDeltaY * sin(Gyroscope.heading(degrees) * M_PI / 180)) * -1.0 + (EncoderDeltaX - DeltaTheta * -1.60520825) * cos(Gyroscope.heading(degrees) * M_PI / 180)) * 0.620639082;
-  CurrentYAxis = CurrentYAxis + ((EncoderDeltaY * cos(Gyroscope.heading(degrees) * M_PI / 180) + (EncoderDeltaX - DeltaTheta * -1.60520825) * sin(Gyroscope.heading(degrees) * M_PI / 180)) * 0.70639082) * -1.0;
+  CurrentXAxis =
+      CurrentXAxis +
+      ((EncoderDeltaY * sin(Gyroscope.heading(degrees) * M_PI / 180)) * -1.0 +
+       (EncoderDeltaX - DeltaTheta * -1.60520825) *
+           cos(Gyroscope.heading(degrees) * M_PI / 180)) *
+          0.620639082;
+  CurrentYAxis =
+      CurrentYAxis +
+      ((EncoderDeltaY * cos(Gyroscope.heading(degrees) * M_PI / 180) +
+        (EncoderDeltaX - DeltaTheta * -1.60520825) *
+            sin(Gyroscope.heading(degrees) * M_PI / 180)) *
+       0.70639082) *
+          -1.0;
 }
 
-//Just an easy function to move declare where the bot is.
-/* This function sets the current position of the robot to the given x and y coordinates. */
+// Just an easy function to move declare where the bot is.
+/* This function sets the current position of the robot to the given x and y
+ * coordinates. */
 void Set_Offset(double x, double y) {
   extern double CurrentXAxis;
   extern double CurrentYAxis;
@@ -47,16 +59,16 @@ void Set_Offset(double x, double y) {
   CurrentYAxis = y;
 }
 
-
-//Easy calculate vector value to coord. Reports positive and negative for direction. Solves wrap around.
-/* This function returns the difference between the gyroscope and the given value. If the difference is
-greater than 180 degrees, it will return the difference minus 360 degrees. */
+// Easy calculate vector value to coord. Reports positive and negative for
+// direction. Solves wrap around.
+/* This function returns the difference between the gyroscope and the given
+value. If the difference is greater than 180 degrees, it will return the
+difference minus 360 degrees. */
 float FromGyro(double r) {
   double DegreeDiff = 0;
   if (fabs((Gyroscope.heading(degrees) - r)) > 180.0) {
     DegreeDiff = ((Gyroscope.heading(degrees) - r) - 359.0) * -1.0;
-  }
-  else {
+  } else {
     DegreeDiff = Gyroscope.heading(degrees) - r;
   }
   return DegreeDiff;

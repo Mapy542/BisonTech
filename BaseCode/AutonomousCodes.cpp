@@ -1,408 +1,145 @@
-#include "AuxiliaryFunctions\BaseLock.cpp"
-#include "AuxiliaryFunctions\CascadeLift.cpp"
-#include "KinematicEngine\Engine.cpp"
-//#include "VectorEngine\Engine.cpp"
-#include "AuxiliaryFunctions\BackBase.cpp"
-#include "AuxiliaryFunctions\PneumaticPush.cpp"
+#include "AuxiliaryFunctions\Endgame.cpp"
+#include "AuxiliaryFunctions\Flywheel.cpp"
+#include "AuxiliaryFunctions\Intake.cpp"
+#include "AuxiliaryFunctions\Roller.cpp"
+#include "AuxiliaryFunctions\Vision.cpp"
+#include "VectorEngine\Engine.cpp"
 #include "vex.h"
 
-// void ThrustTest() {}
+/*
+0 = odometer overwrite (x,y,w) write style 0 = overwrite, 1 = add
+1 = simple destination(x,y,r,s)
+7 = simple waypoint(x,y,r,s) no proximity ramping
+2 = intake(v) velocity
+3 = flywheel(v)
+4 = trigger(p) pulse count (0, 1) = empty ricky.DiskCount
+5 = wait(s) seconds
+6 = roller(0,r) degrees (1,v) velocity
+*/
+/*double test_route[][5] = {{0, 230, 230, 180, 0},
+                          {1, 600, 600, 90, 0.5},
+                          //{1, -200, 300, 270, 0.7},
+                          {1, 230, 230, 180, 0.5}};
+int test_route_length = sizeof(test_route) / sizeof(double) / 5;*/
 
-// BEN CODE HERE
+double leftdiskandrollerup[][5] = {
+    {0, -814, 255, 270, 0}, // set origin
+    {1, -814, 220, 270, .7},
+    {6, 0, 180, 0, 0},         // spin roller
+    {3, 75, 0, 0, 0},          // spin up flywheel
+    {1, -1850, 1220, 244, .7}, // move to middle of court
+    {4, 2, 0, 0, 0},           // shoot two disks
+    {3, 0, 0, 0, 0}            // spindown flywheel
+};
 
-// JENA CODE HERE
+const int leftdiskandrollerup_length = sizeof(leftdiskandrollerup) /
+                                       sizeof(double) /
+                                       5; // calculate length of array
+double bothrollers[][5] = {
+    {0, -814, 255, 270, 0},  // set origin
+    {1, -814, 220, 270, .7}, // touch against roller
+    {6, 0, 180, 0, 0},       // spin roller
+    //{7, -1880, 1220, 244, 0.7}, // midpoint dont hit barrier
+    //{7, -2700, 1700, 190, 0.7}, // avoid outside
+    {7, -3090, 2500, 270, 0.7}, // goto next roller but stay inside lines
+    {1, -3090, 2500, 180, 0.5}, // shpinmove
+    {1, -3110, 270, 180, 0.7},  //
+    {6, 0, 180, 0, 0}           // spin roller
+};
+const int bothrollers_length = sizeof(bothrollers) / sizeof(double) / 5;
 
-void SkillsRun() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
+double skills[][5] = {
+    {0, -814, 255, 270, 0},    // initalize
+    {1, -814, 220, 270, 0.7},  // touch against roller
+    {6, 0, 360, 0, 0},         // spin 180 degrees to red
+    {1, -220, 814, 10, 0.7},   // move to next roller
+    {6, 0, 360, 0, 0},         // spin 180 degrees to red on second roller
+    {3, 70, 0, 0, 0},          // start flywheel
+    {1, -814, 1814, 275, 0.7}, // move to shoot disks
+    {4, 2, 0, 0, 0},           // shoot two disks
+    {}
+
+};
+const int skills_length = sizeof(skills) / sizeof(double) / 5;
+
+void AutonomousIndexer(double routine[][5], int length) {
+  extern Robot_Telemetry ricky;
+  for (int i = 0; i < length; i++) {
+    if (routine[i][0] == 0) {   // odometer overwrite
+      if (routine[i][4] == 0) { // write style 0 = overwrite, 1 = add
+        ricky.CurrentXAxis = routine[i][1];
+        ricky.TargetXAxis = routine[i][1];
+        ricky.CurrentYAxis = routine[i][2];
+        ricky.TargetYAxis = routine[i][2];
+        Gyroscope.setHeading(routine[i][3], degrees);
+        ricky.TargetTheta = routine[i][3];
+      } else if (routine[i][4] == 1) {
+        ricky.CurrentXAxis += routine[i][1];
+        ricky.TargetXAxis += routine[i][1];
+        ricky.CurrentYAxis += routine[i][2];
+        ricky.TargetYAxis += routine[i][2];
+        Gyroscope.setHeading(routine[i][3], degrees);
+        ricky.TargetTheta += routine[i][3];
+      }
+    }
+    if (routine[i][0] == 1) { // simple destination
+      ricky.TargetXAxis = routine[i][1];
+      ricky.TargetYAxis = routine[i][2];
+      ricky.TargetTheta = routine[i][3];
+      ricky.TargetSpeed = routine[i][4];
+      ricky.StartXAxis = ricky.CurrentXAxis;
+      ricky.StartYAxis = ricky.CurrentYAxis;
+      ricky.StartTheta = ricky.CurrentThetaValue;
+      ricky.Destination = true;
+      vex::task::sleep(250);
+      while (
+          ricky.EngineBusy &&
+          !ricky.TravelImpeded) { // wait for the engine to finish or get stuck
+        vex::task::sleep(50);
+      }
+    } else if (routine[i][0] == 2) { // set intake velocity
+      IntakeVelocity(routine[i][1]);
+    } else if (routine[i][0] == 3) { // set flywheel velocity
+      FlywheelVelocity(routine[i][1]);
+    } else if (routine[i][0] == 4) { // trigger pulse x times
+      if (routine[i][2] == 1) {      // empty hopper
+        TriggerPulse(Ricky.DiskCount);
+      } else {
+        TriggerPulse(int(routine[i][1]));
+      }
+    } else if (routine[i][0] == 5) { // wait for x seconds
+      vex::task::sleep(int(routine[i][1] * 1000));
+    } else if (routine[i][0] == 6) { // roller
+      if (routine[i][1] == 0) {
+        Roller.setVelocity(50, percent);
+        Roller.spinFor(forward, routine[i][2], degrees, true);
+      } else if (routine[i][1] == 1) {
+        Roller.setVelocity(routine[i][2], percent);
+        Roller.spin(forward);
+      }
+    } else if (routine[i][0] == 7) { // waypoint
+      ricky.TargetXAxis = routine[i][1];
+      ricky.TargetYAxis = routine[i][2];
+      ricky.TargetTheta = routine[i][3];
+      ricky.TargetSpeed = routine[i][4];
+      ricky.StartXAxis = ricky.CurrentXAxis;
+      ricky.StartYAxis = ricky.CurrentYAxis;
+      ricky.StartTheta = ricky.CurrentThetaValue;
+      ricky.Destination = false;
+      vex::task::sleep(250);
+      while (
+          ricky.EngineBusy &&
+          !ricky.TravelImpeded) { // wait for the engine to finish or get stuck
+        vex::task::sleep(50);
+      }
+    }
   }
-  Gyroscope.setHeading(180.0, degrees);
-  // pickup red
-  SendLiftto(-300);
-  RodKnock();
-  Destination(3260.0, 550.0, 180.0, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  Lock_Base();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(300);
-  // drop red
-  Waypoint(3260.0, 2000.0, 180.0, 0.7);
-  Destination(2700.0, 2400.0, 90.0, 0.6);
-  SendLiftto(-300.0);
-  Unlock_Base();
-  Destination(3220.0, 2400.0, 90.0, 0.7);
-  // pickup blue
-  Waypoint(3250.0, 3300.0, 90.0, 0.5);
-  Destination(2935.0, 3300.0, 90.0, 0.5);
-  Lock_Base();
-  SendLiftto(600);
-  Waypoint(3250.0, 3220.0, 90.0, 0.5);
-  Waypoint(2820.0, 2400.0, 90.0, 0.7);
-  // bulldoze yellow 1
-  Waypoint(2820.0, 900.0, 90.0, 0.7);
-  Destination(2820.0, 1100.0, 90.0, 0.7);
-  // spin move blue
-  Unlock_Base();
-  SendLiftto(-600.0);
-  Waypoint(2500.0, 1100.0, 300.0, 0.7);
-  Waypoint(1800.0, 1100.0, 270.0, 0.7);
-  // bulldoze yellow 2
-  Waypoint(1780.0, 1300.0, 270.0, 0.7);
-  Waypoint(1780.0, 2300.0, 270.0, 0.7);
-  Waypoint(1300.0, 2300.0, 270.0, 0.7);
-  // pickup blue
-  Waypoint(1200.0, 2775.0, 90.0, 0.7);
-  Destination(600.0, 2775.0, 90.0, 0.5);
-  Lock_Base();
-  SendLiftto(300.0);
-  // yellow number 3
-  Waypoint(1000.0, 2300.0, 250.0, 0.7);
-  Waypoint(1200.0, 1300.0, 250.0, 0.7);
-  // drop blue 2
-  Destination(1400.0, 1350.0, 300.0, 0.5);
-  Unlock_Base();
-  SendLiftto(-300.0);
-  Waypoint(1130.0, 1350.0, 270.0, 0.6);
-  Waypoint(350.0, 1350.0, 270.0, 0.5);
-  // pick red
-  Waypoint(350.0, 450.0, 270.0, 0.5);
-  Destination(650.0, 450.0, 270.0, 0.5);
-  Lock_Base();
-  SendLiftto(600.0);
-  Waypoint(350.0, 450.0, 270.0, 0.7);
-  // yeet
-  Destination(430.0, 2600.0, 270.0, 0.7);
-  Unlock_Base();
-  SendLiftto(-600.0);
+  ricky.AutoDone = true;
 }
 
-// checked worlds
-void RightYellowLast() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // pickup red
-  SendLiftto(-300.0);
-  Destination(3260.0, 550.0, 180.0, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(300);
-  // drop red
-  Destination(2800.0, 500.0, 270.0, 0.6);
-  Unlock_Base();
-  SendLiftto(-300.0);
-  Waypoint(2600.0, 500.0, 270.0, 0.7);
-  Waypoint(2730.0, 1250.0, 180.0, 0.7);
-  Destination(2730.0, 1600.0, 180.0, 0.6);
-  Lock_Base();
-  SendLiftto(150);
-  Destination(2730.0, 300.0, 180.0, 0.5);
-  Unlock_Base();
-  SendLiftto(-150);
-  LiftLeft.stop();
-  LiftRight.stop();
-}
-
-// checked worlds
-void RightYellowFirst() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // avoid home base
-  // Waypoint(3000.0, 350.0, 180.0, 0.7);
-  XArc(2700.0, 1000.0, 180.0, 0.7, true);
-  SendLiftto(-300);
-  RodKnock();
-  // pickup yellow
-  Destination(2710.0, 1650.0, 180.0, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(300);
-  // push red
-  YArc(3150, 1400, 180, .7, false);
-  Destination(3200.0, 600, 180, 0.6);
-  SendLiftto(-300);
-  Unlock_Base();
-  LiftLeft.stop();
-  LiftRight.stop();
-}
-
-// checked worlds
-void LeftYellowFirst() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180, degrees);
-  Destination(830, 1000, 180, .7);
-  SendLiftto(-300);
-  RodKnock();
-  Destination(830, 1700, 180, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  Destination(1500, 900, 270, .7);
-  Unlock_Base();
-  Waypoint(300, 900, 270, .7);
-  Waypoint(300, 300, 270, .7);
-  Destination(750, 300, 270, .7);
-  Lock_Base();
-  SendLiftto(650);
-  Waypoint(600, 600, 270, .7);
-  Destination(900, 500, 1, .5);
-  Unlock_Base();
-  SendLiftto(-200);
-  Destination(900, 700, 1, .7);
-}
-
-// checked worlds
-void RightSideMiddle() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // send in front of middle
-  XArc(2450.0, 1400.0, 130, 0.7, true);
-  SendLiftto(-300);
-  RodKnock();
-  // pickup middle yellow
-  Destination(2000.0, 1900.0, 130, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(300);
-  // back to home zone
-  Destination(2900.0, 400.0, 130.0, 0.7);
-  SendLiftto(-300);
-  LiftLeft.stop();
-  LiftRight.stop();
-}
-
-// checked worlds
-void LeftSideMiddle() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // send in front of middle
-  Destination(800.0, 1200.0, 180, 0.7);
-  SendLiftto(-300);
-  Destination(1100.0, 1200.0, 225, 0.7);
-  RodKnock();
-  // pickup middle yellow
-  Destination(1700.0, 1700.0, 225, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(300);
-  // back to home zone
-  Destination(700.0, 700.0, 225, 0.6);
-  SendLiftto(-300);
-  Unlock_Base();
-  LiftLeft.stop();
-  LiftRight.stop();
-}
-
-// expirmental
-void RightYellowBack() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // avoid home base
-  Waypoint(3000.0, 350.0, 180.0, 0.7);
-  Destination(2700.0, 1000.0, 1.0, 0.7);
-  Extend_Back();
-  // pickup yellow
-  Destination(2700.0, 1750.0, 1.0, 0.5);
-  wait(.5, seconds);
-  Destination(2700, 1750, 0, .7);
-  wait(.5, seconds);
-  CloseBack();
-  Retract_Back();
-  SendLiftto(-300);
-  LiftLeft.stop();
-  LiftRight.stop();
-  RodKnock();
-  // push red
-  Waypoint(3230, 1500, 12, .4);
-  Destination(3230.0, 600, 12, 0.4);
-  Lock_Base();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  LiftLeft.stop();
-  LiftRight.stop();
-}
-
-// expirmental
-void SkillsV2() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // pickup blue
-  SendLiftto(-300);
-  RodKnock();
-  Destination(3260.0, 550.0, 180.0, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(400);
-  // Drive to blue platform
-  Waypoint(3260.0, 2600.0, 200.0, 0.7);
-  Destination(2900.0, 3100.0, 180.0, 0.6);
-  SendLiftto(700);
-  // level platform
-  Destination(1500, 3100.0, 180.0, 0.6);
-  Destination(1800, 3100, 180, 0.7);
-  // drop first blue
-  SendLiftto(-30.0);
-  Unlock_Base();
-  Destination(1720, 2700.0, 180.0, 0.7);
-  SendLiftto(-1070);
-
-  // BACK HALF HYBRID
-  // pickup right yellow
-  Waypoint(1720, 2800, 350, .7);
-  Waypoint(2633.75, 2800, 350, .7);
-  Destination(2633.75, 2133, 350, .7);
-  Lock_Base();
-  SendLiftto(1100);
-  // drop right yellow
-  Destination(2750, 3100, 180, .7);
-  Destination(2000, 3100, 180, .7);
-  SendLiftto(-30);
-  Unlock_Base();
-  Waypoint(1900, 2550, 200, .7);
-  Destination(2000, 2700, 180, .7);
-  SendLiftto(-1070);
-  // pickup left yellow
-  Destination(1950, 2800, 12, .7);
-  Destination(940, 2800, 13, .7);
-  Destination(940, 2133, 10, .5);
-  Lock_Base();
-  SendLiftto(1100);
-  // drop left yellow
-  Destination(890, 3100, 180, .7);
-  Destination(1650, 3100, 180, .7);
-  // SendLiftto(-30);
-  Unlock_Base();
-  Destination(1650, 2700, 180, .7);
-  SendLiftto(-1100);
-  // bulldoze middle yellow
-  Waypoint(1700, 2600, 180, .7);
-  Destination(1700, 900, 180, .7);
-}
-
-void ShowOffArc() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  while (true) {
-    XArc(700, 600, 180, .5, false);
-    XArc(0, 0, 180, .5, false);
-    YArc(-700, -600, 180, .5, false);
-    YArc(0, 0, 180, .5, true);
-  }
-}
-
-// Attemp to shove base further onto platform with ram feature.
-void SkillsV2Ramming() {
-  while (Gyroscope.isCalibrating()) {
-    task::sleep(50);
-  }
-  Gyroscope.setHeading(180.0, degrees);
-  // pickup blue
-  SendLiftto(-300);
-  RodKnock();
-  Destination(3260.0, 550.0, 180.0, 0.6);
-  LiftLeft.stop();
-  LiftRight.stop();
-  DynamicBoundsDetection();
-  wait(0.15, seconds);
-  Unlock_Base();
-  wait(0.15, seconds);
-  Lock_Base();
-  SendLiftto(400);
-  // Drive to blue platform
-  Waypoint(3260.0, 2600.0, 200.0, 0.7);
-  Destination(2900.0, 3100.0, 180.0, 0.6);
-  SendLiftto(700);
-  // level platform
-  Destination(1500, 3100.0, 180.0, 0.6);
-  Destination(1800, 3100, 180, 0.7);
-  // drop first blue
-  SendLiftto(-30.0);
-  Unlock_Base();
-  Ram(1800, 3150, 180);
-  Destination(1720, 2700.0, 180.0, 0.7);
-  SendLiftto(-1070);
-
-  // BACK HALF HYBRID
-  // pickup right yellow
-  Waypoint(1720, 2800, 350, .7);
-  Waypoint(2633.75, 2800, 350, .7);
-  Destination(2633.75, 2133, 350, .7);
-  Lock_Base();
-  SendLiftto(1100);
-  // drop right yellow
-  Destination(2750, 3100, 180, .7);
-  Destination(2000, 3100, 180, .7);
-  SendLiftto(-30);
-  Unlock_Base();
-  Ram(2000, 3150, 180);
-  Waypoint(1900, 2550, 200, .7);
-  Destination(2000, 2700, 180, .7);
-  SendLiftto(-1070);
-  // pickup left yellow
-  Destination(1950, 2800, 12, .7);
-  Destination(940, 2800, 13, .7);
-  Destination(940, 2133, 10, .5);
-  Lock_Base();
-  SendLiftto(1100);
-  // drop left yellow
-  Destination(890, 3120, 180, .7);
-  Destination(1650, 3120, 180, .7);
-  // SendLiftto(-30);
-  Unlock_Base();
-  Ram(1650, 3150, 180);
-  Destination(1650, 2700, 180, .7);
-  SendLiftto(-1100);
-  // bulldoze middle yellow
-  Waypoint(1700, 2600, 180, .7);
-  Destination(1700, 900, 180, .7);
-}
+int AutonomousRoutineDeamon() { // Main engine loop
+  extern int test_route_length;
+  AutonomousIndexer(bothrollers,
+                    bothrollers_length); // runs through the given routine
+  return 1;
+};

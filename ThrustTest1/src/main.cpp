@@ -1,71 +1,84 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       C:\Users\Eli                                              */
-/*    Created:      Feb 1 2022                                                */
-/*    Description:  multi autonomous codes                                    */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
-
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// FL                   motor         19              
-// RL                   motor         20              
-// FR                   motor         9               
-// RR                   motor         10              
-// Gyroscope            inertial      18              
-// y                    encoder       A, B            
-// x                    encoder       C, D            
-// LiftLeft             motor         7               
-// LiftRight            motor         6               
-// BaseLock             motor         17              
-// DigitalOutH          digital_out   H               
-// BackMotor            motor         16              
-// DigitalOutG          digital_out   G               
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
+#include "C:\Users\elimb\Documents\GitHub\BisonTech\BaseCode\AutonomousCodes.cpp"
 #include "vex.h"
-#include "C:\Users\Eli\Documents\BisonTech\BaseCode\AutonomousCodes.cpp"
+
 
 using namespace vex;
-
 competition Competition;
 
-double lbs_mass = 5; //robot in lbs
-double mass = lbs_mass * 0.453592;
-
-//Odometry
-double CurrentXAxis, CurrentYAxis, PreviousTheta, PreviousYValue, PreviousXValue, globaldelta;
-//Vector Engine
-double CurrentXVelocity, CurrentYVelocity, CurrentRVelocity;
-
-//old
-int LockDesiredState, BackDesiredState, BackGripperDesiredState, LeftInital, RightInital, BaseLockOffset;
+Robot_Telemetry ricky; // Pass data to functions via a global struct named ricky
+// seemed efficient i guess
 
 // Autonomousv2
 int onauton_autonomous_0() {
-    ThrustTest();
+  extern Robot_Telemetry ricky;
+  while (Gyroscope
+             .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
+    vex::task::sleep(50);
+  }
+  vex::task Autonoma(AutonomousRoutineDeamon);
+  vex::task::sleep(100);
+  vex::task Vector_Engine(Engine);
+  vex::task flwe(FlywheelPID);
+
+  while(true){
+    printf("%.6f", ricky.CurrentXAxis);
+    printf(", ");
+    printf("%.6f", ricky.CurrentYAxis);
+    printf(", ");
+    printf("%.6f", Gyroscope.heading(degrees));
+    printf(", Target Velocity: ");
+    printf("%.6f", ricky.SetXVelocity);
+    printf(", ");
+    printf("%.6f", ricky.SetYVelocity);
+    printf(", ramp:");
+    printf("%.6f", ricky.TargetTotalVelocity);
+    printf("\n");
+    if(ricky.AutoDone){
+      Autonoma.stop();
+      Vector_Engine.stop();
+      flwe.stop();
+      
+    }
+    vex::task::sleep(100);
+  }
 return 0;
 }
 
 // Driver Control
 int ondriver_drivercontrol_0() {
+  // onauton_autonomous_0();
+    while (Gyroscope
+             .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
+    vex::task::sleep(50);
+             }
+vex::task flywghee(FlywheelPID);
+  vex::task Engine(DriverSupplementEngine);
   while (true) {
-    ThrustTest();
+    ManualDriveTrainControl();
+    ManualIntake();
+    ManualFlywheelPID();
+    ManualEndgame();
+    ManualRoller();
+      printf("%.6f", ricky.CurrentXAxis);
+    printf(", ");
+    printf("%.6f", ricky.CurrentYAxis);
+    printf(", ");
+    printf("%.6f", Gyroscope.heading(degrees));
+    printf(", Target Velocity: ");
+    printf("%.6f", ricky.TargetTheta);
+    printf(", ");
+    printf("%.6f", ricky.SetYVelocity);
+    printf(", ramp:");
+    printf("%.6f", ricky.TargetTotalVelocity);
+    printf("\n");
     wait(5, msec);
   }
+  return 1;
 }
 
 // Initalization
 int whenStarted1() {
   Gyroscope.startCalibration();
-  Set_Offset(3355.0, 230.0);
-  PreviousTheta = 180;
-  PreviousYValue = 0;
-  PreviousXValue = 0;
-  LockDesiredState = -99;
   FL.setStopping(brake);
   RL.setStopping(brake);
   FR.setStopping(brake);
@@ -74,18 +87,14 @@ int whenStarted1() {
   FR.setMaxTorque(100.0, percent);
   FL.setMaxTorque(100.0, percent);
   RR.setMaxTorque(100.0, percent);
-  LiftLeft.setMaxTorque(100.0, percent);
-  LiftRight.setMaxTorque(100.0, percent);
-  LiftLeft.setVelocity(100.0, percent);
-  LiftRight.setVelocity(100.0, percent);
-  LiftLeft.setStopping(brake);
-  LiftRight.setStopping(brake);
-  BaseLock.setVelocity(100.0, percent);
-  BaseLock.setStopping(hold);
-  BackMotor.setVelocity(100, percent);
-  BackMotor.setStopping(hold);
-  LeftInital = LiftLeft.position(degrees);
-  RightInital = LiftRight.position(degrees);
+  Flywheel1.setMaxTorque(100.0, percent);
+  Flywheel2.setMaxTorque(100.0, percent);
+  Flywheel1.setVelocity(0, percent);
+  Flywheel2.setVelocity(0, percent);
+  Intake.setVelocity(100.0, percent);
+  ricky.CurrentXEncoderValue = x.rotation(degrees);
+  ricky.CurrentYEncoderValue = y.rotation(degrees);
+  EndgameLaunch.set(true);
   return 0;
 }
 
@@ -111,7 +120,7 @@ void VEXcode_auton_task() {
 
 int main() {
   vexcodeInit();
-  vex::competition::bStopTasksBetweenModes = false;
+  vex::competition::bStopTasksBetweenModes = true;
   Competition.autonomous(VEXcode_auton_task);
   Competition.drivercontrol(VEXcode_driver_task);
 
