@@ -50,7 +50,7 @@ return 0;
 
 // Driver Control
 int ondriver_drivercontrol_0() {
-  onauton_autonomous_0();
+  //onauton_autonomous_0();
   Brain.resetTimer();
     while (Gyroscope
              .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING

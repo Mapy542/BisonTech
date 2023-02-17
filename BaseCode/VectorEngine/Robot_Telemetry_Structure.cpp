@@ -19,7 +19,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   const float DistanceTolerance = 4; // mm
   const float AngleTolerance = 1;    // degrees
 
-  const float StuckTolerance = 0.02; // mm/(1/3)s
+  const float StuckTolerance = 0.01; // mm/(1/3)s
 
   // ODOMETRY//////////////////////////////////////////////////////////
   double CurrentXAxis = 0; // From Odometry systems

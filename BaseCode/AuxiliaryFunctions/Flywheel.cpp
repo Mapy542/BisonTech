@@ -8,7 +8,8 @@ int LocationBasedFlywheelPower() {
   float distanceD = sqrt(distanceX * distanceX + distanceY * distanceY);
   double power =
       (3.32 + 0.358 * distanceD + -5.69E-04 * distanceD * distanceD) /
-      ricky.MaximumFlywheelDistance * 100;
+          ricky.MaximumFlywheelDistance +
+      0.50;
   if (power < ricky.FlywheelMin) {
     power = ricky.FlywheelMin;
   }
@@ -54,10 +55,11 @@ void FlywheelVelocity(int velocity) { // set flywheel velocity
 
 void TriggerPulse(int pulses) { // trigger pulses
   extern Robot_Telemetry ricky;
-  ricky.FlywheelTargetVelocity = LocationBasedFlywheelPower(); // get flywheel
-                                                               // power based on
-                                                               // distance from
-                                                               // goal
+  // ricky.FlywheelTargetVelocity = LocationBasedFlywheelPower(); // get
+  // flywheel
+  // power based on
+  // distance from
+  // goal
   ricky.DiskCount -= pulses;
   if (pulses == 1) {
     Trigger.set(true);

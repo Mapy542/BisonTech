@@ -25,9 +25,10 @@ int test_route_length = sizeof(test_route) / sizeof(double) / 5;*/
 double leftdiskandrollerup[][5] = {
     {0, -814, 255, 270, 0}, // set origin
     {1, -814, 220, 270, .7},
-    {6, 0, 180, 0, 0},         // spin roller
-    {3, 75, 0, 0, 0},          // spin up flywheel
-    {1, -1850, 1220, 244, .7}, // move to middle of court
+    {6, 0, 180, 0, 0}, // spin roller
+    {3, 71, 0, 0, 0},  // spin up flywheel
+    {1, -814, 260, 270, 0.4},
+    {1, -1850, 1220, 242, .7}, // move to middle of court
     {4, 2, 0, 0, 0},           // shoot two disks
     {3, 0, 0, 0, 0}            // spindown flywheel
 };
@@ -36,27 +37,32 @@ const int leftdiskandrollerup_length = sizeof(leftdiskandrollerup) /
                                        sizeof(double) /
                                        5; // calculate length of array
 double bothrollers[][5] = {
-    {0, -814, 255, 270, 0},  // set origin
-    {1, -814, 220, 270, .7}, // touch against roller
-    {6, 0, 180, 0, 0},       // spin roller
-    //{7, -1880, 1220, 244, 0.7}, // midpoint dont hit barrier
-    //{7, -2700, 1700, 190, 0.7}, // avoid outside
-    {7, -3090, 2500, 270, 0.7}, // goto next roller but stay inside lines
-    {1, -3090, 2500, 180, 0.5}, // shpinmove
-    {1, -3110, 270, 180, 0.7},  //
+    {0, -814, 255, 270, 0},   // set origin
+    {1, -814, 220, 270, .7},  // touch against roller
+    {6, 0, 180, 0, 0},        // spin roller
+    {1, -914, 250, 270, 0.5}, // pull away from roller
+    {1, -914, 250, 240, 0.7}, // spin
+    //{7, -3090, 2500, 270, 0.7}, // goto next roller but stay inside lines
+    {1, -3090, 2400, 240, 0.7},
+    {1, -3090, 2400, 180, 0.5}, // shpinmove
+    {1, -3210, 2700, 180, 0.7}, //
     {6, 0, 180, 0, 0}           // spin roller
 };
 const int bothrollers_length = sizeof(bothrollers) / sizeof(double) / 5;
 
 double skills[][5] = {
-    {0, -814, 255, 270, 0},    // initalize
+    {0, -814, 255, 270, 0},    // initialize
     {1, -814, 225, 270, 0.7},  // touch against roller
     {6, 0, 360, 0, 0},         // spin 180 degrees to red
-    {1, -340, 450, 350, 0.7},  // move to next roller
+    {1, -814, 400, 270, 0.7},  // pull away from roller
+    {1, -614, 500, 355, 0.7},  // rotate banana
+    {1, -340, 500, 350, 0.7},  // move to next roller
     {6, 0, 360, 0, 0},         // spin 180 degrees to red on second roller
-    {3, 66, 0, 0, 0},          // start flywheel
-    {1, -814, 1814, 270, 0.7}, // move to shoot disks
+    {3, 60, 0, 0, 0},          // start flywheel
+    {1, -500, 500, 350, 0.7},  // pull away from roller
+    {1, -814, 1814, 268, 0.7}, // move to shoot disks
     {4, 2, 0, 0, 0},           // shoot two disks
+    {3, 0, 0, 0, 0}            // stop flywheel
 
 };
 const int skills_length = sizeof(skills) / sizeof(double) / 5;
@@ -145,7 +151,7 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(skills,
-                    skills_length); // runs through the given routine
+  AutonomousIndexer(bothrollers,
+                    bothrollers_length); // runs through the given routine
   return 1;
 };
