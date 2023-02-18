@@ -37,30 +37,6 @@ void ProximityRamp() { // ramp down to target speed based on distance to target
 
 void MotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
-  /*double DeltaXVelocity =
-      (ricky.TargetXVelocity -
-       ricky.SetXVelocity); // find change in velocity percent
-  if (DeltaXVelocity >
-      ricky.MaxAcceleration) { // if change is greater than max acceleration
-    DeltaXVelocity = ricky.MaxAcceleration; // limit change to max acceleration
-  } else if (DeltaXVelocity < -ricky.MaxAcceleration) {
-    DeltaXVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetXVelocity += DeltaXVelocity;
-  double DeltaYVelocity = (ricky.TargetYVelocity - ricky.SetYVelocity);
-  if (DeltaYVelocity > ricky.MaxAcceleration) {
-    DeltaYVelocity = ricky.MaxAcceleration;
-  } else if (DeltaYVelocity < -ricky.MaxAcceleration) {
-    DeltaYVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetYVelocity += DeltaYVelocity;
-  double DeltaRVelocity = (ricky.TargetRVelocity - ricky.SetRVelocity);
-  if (DeltaRVelocity > ricky.MaxAcceleration) {
-    DeltaRVelocity = ricky.MaxAcceleration;
-  } else if (DeltaRVelocity < -ricky.MaxAcceleration) {
-    DeltaRVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetRVelocity += DeltaRVelocity;*/
 
   // convert to polar coordinates and rotate by difference of starting point and
   // current theta
@@ -212,31 +188,6 @@ void SupplementProximityRamp() { // ramp down to target speed based on distance
 
 void SupplementMotorVectorEngine() { // main calculation loop
   extern Robot_Telemetry ricky;
-  /*double DeltaXVelocity =
-      (ricky.TargetXVelocity -
-       ricky.SetXVelocity); // find change in velocity percent
-  if (DeltaXVelocity >
-      ricky.MaxAcceleration) { // if change is greater than max acceleration
-    DeltaXVelocity = ricky.MaxAcceleration; // limit change to max acceleration
-  } else if (DeltaXVelocity < -ricky.MaxAcceleration) {
-    DeltaXVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetXVelocity += DeltaXVelocity;
-  double DeltaYVelocity = (ricky.TargetYVelocity - ricky.SetYVelocity);
-  if (DeltaYVelocity > ricky.MaxAcceleration) {
-    DeltaYVelocity = ricky.MaxAcceleration;
-  } else if (DeltaYVelocity < -ricky.MaxAcceleration) {
-    DeltaYVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetYVelocity += DeltaYVelocity;
-  double DeltaRVelocity = (ricky.TargetRVelocity - ricky.SetRVelocity);
-  if (DeltaRVelocity > ricky.MaxAcceleration) {
-    DeltaRVelocity = ricky.MaxAcceleration;
-  } else if (DeltaRVelocity < -ricky.MaxAcceleration) {
-    DeltaRVelocity = -ricky.MaxAcceleration;
-  }
-  ricky.SetRVelocity += DeltaRVelocity;*/
-
   // convert to polar coordinates and rotate by difference of starting point and
   // current theta
   EnginePolarTransformation(ricky.TargetXVelocity, ricky.TargetYVelocity,
