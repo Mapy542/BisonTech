@@ -34,8 +34,8 @@ void ManualDriveTrainControl() {
   double R_Speed;
   if (!ricky.Override_Manual_R) {
     R_Speed = Controller1.Axis4.position() * TurnMultiplier;
+    DriveMotors(X_Speed, Y_Speed, R_Speed, 1);
   } else {
-    R_Speed = ricky.Override_R_Speed;
+    vex::task::sleep(50);
   }
-  DriveMotors(X_Speed, Y_Speed, R_Speed, 1);
 }
