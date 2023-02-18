@@ -26,7 +26,7 @@ void ManualFlywheelPID() {
   // distance from goal
 
   if (Controller1.ButtonB.pressing()) { // spin up flywheel
-    ricky.FlywheelTargetVelocity = 80;
+    ricky.FlywheelTargetVelocity = 75;
   }
 
   if (Controller1.ButtonY.pressing()) { // spin up flywheel
