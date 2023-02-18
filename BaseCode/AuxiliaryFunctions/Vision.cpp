@@ -1,3 +1,4 @@
+#include "../VectorEngine/Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 
 int VisionDeamon() {
@@ -22,12 +23,12 @@ int VisionDeamon() {
       }
     }
 
-    if (ricky.DiskCount >= 3 &&
-        Intake.velocity(percent) > 0) { // intake intelisense
-      Intake.setVelocity(0, percent);   // stop intake if 3 disks are in the
-                                      // hopper
-      Intake.spin(forward);
-    }
-    vex::task::sleep(50);
+    /*  if (ricky.DiskCount >= 3 &&
+          Intake.velocity(percent) > 0) { // intake intelisense
+        Intake.setVelocity(0, percent);   // stop intake if 3 disks are in the
+                                        // hopper
+        Intake.spin(forward);
+      }
+      vex::task::sleep(50);*/
   }
 }
