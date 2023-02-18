@@ -1,8 +1,7 @@
-#include "..\AuxiliaryFunctions\Telemetry.cpp"
+//#include "..\AuxiliaryFunctions\Telemetry.cpp"
 #include "MotorDriver.cpp"
 #include "Odometry.cpp"
 #include "vex.h"
-
 
 // Precision for stopping at a place
 void Destination(double x, double y, double r, double speed) {

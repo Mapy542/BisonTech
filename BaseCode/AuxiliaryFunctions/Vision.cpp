@@ -1,3 +1,4 @@
+#include "../VectorEngine/Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 
 int VisionDeamon() {

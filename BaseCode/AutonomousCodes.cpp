@@ -33,6 +33,7 @@ double leftdiskandrollerup[][5] = {
     {3, 0, 0, 0, 0}            // spindown flywheel
 };
 
+// howdy
 const int leftdiskandrollerup_length = sizeof(leftdiskandrollerup) /
                                        sizeof(double) /
                                        5; // calculate length of array
@@ -151,7 +152,8 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(bothrollers,
-                    bothrollers_length); // runs through the given routine
+  AutonomousIndexer(
+      leftdiskandrollerup,
+      leftdiskandrollerup_length); // runs through the given routine
   return 1;
 };

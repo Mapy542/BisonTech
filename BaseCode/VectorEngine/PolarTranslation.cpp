@@ -1,5 +1,7 @@
+#include "Robot_Telemetry_Structure.cpp"
 #include "vex.h"
 #include <cmath>
+
 // Polar Translation from cartesian to polar coordinates and back after rotation
 // transformation
 

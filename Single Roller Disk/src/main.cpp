@@ -94,7 +94,7 @@ int whenStarted1() {
   Intake.setVelocity(100.0, percent);
   ricky.CurrentXEncoderValue = x.rotation(degrees);
   ricky.CurrentYEncoderValue = y.rotation(degrees);
-  EndgameLaunch.set(true);
+  EndgameLaunch.set(false);
   return 0;
 }
 
