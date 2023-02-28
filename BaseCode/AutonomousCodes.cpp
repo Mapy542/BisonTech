@@ -68,6 +68,48 @@ double skills[][5] = {
 };
 const int skills_length = sizeof(skills) / sizeof(double) / 5;
 
+double FlywheelTest[][5] = {
+    {2, 100, 0, 0, 0}, // start intake
+    {3, 40, 0, 0, 0},  // spinup flywheel
+    {5, 5, 0, 0, 0},   // wait for stabilization
+    {4, 2, 0, 0, 0},   // shoot two disks
+    {5, 10, 0, 0, 0},  // wait for data collection
+
+    {3, 50, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 60, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 70, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 80, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 90, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 100, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},   // wait for stabilization
+    {4, 2, 0, 0, 0},   // shoot two disks
+    {5, 10, 0, 0, 0},  // wait for data collection
+
+    {3, 0, 0, 0, 0}, // stop flywheel
+    {2, 0, 0, 0, 0}  // stop intake
+};
+const int FlywheelTest_length = sizeof(FlywheelTest) / sizeof(double) / 5;
+
 void AutonomousIndexer(double routine[][5], int length) {
   extern Robot_Telemetry ricky;
   for (int i = 0; i < length; i++) {
@@ -152,8 +194,7 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(
-      leftdiskandrollerup,
-      leftdiskandrollerup_length); // runs through the given routine
+  AutonomousIndexer(FlywheelTest,
+                    FlywheelTest_length); // runs through the given routine
   return 1;
 };
