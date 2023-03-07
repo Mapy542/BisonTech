@@ -5,25 +5,33 @@ int LocationBasedFlywheelPower() {
   extern Robot_Telemetry ricky;
   float distanceX = fabs(ricky.GoalXPosition - ricky.CurrentXAxis);
   float distanceY = fabs(ricky.CurrentYAxis - ricky.GoalYPosition);
-  float distanceD = sqrt(distanceX * distanceX + distanceY * distanceY);
-  double power =
-      (3.32 + 0.358 * distanceD + -5.69E-04 * distanceD * distanceD) /
-          ricky.MaximumFlywheelDistance +
-      0.50;
-  if (power < ricky.FlywheelMin) {
-    power = ricky.FlywheelMin;
+  float distanceD = sqrt(distanceX * distanceX + distanceY * distanceY) *
+                    1.25; // calculate distance from goal and add offset for
+                          // distance of goal above ground
+
+  int i = 0;
+  while (distanceD < ricky.FlywheelPowerDistances[i] ||
+         i < 7) { // find maximum power
+    i++;
   }
-  if (power > ricky.FlywheelMax) {
-    power = ricky.FlywheelMax;
+  if (ricky.FlywheelPowerDistances[i] ==
+      distanceD) { // if distance is exact return power
+    return ricky.FlywheelPowerValues[i];
   }
-  return (int)(power * 100);
+
+  float ratio =
+      (distanceD - ricky.FlywheelPowerDistances[i - 1]) /
+      (ricky.FlywheelPowerDistances[i] -
+       ricky.FlywheelPowerDistances[i - 1]); // calculate ratio of distance
+                                             // between two points
+  return ricky.FlywheelPowerValues[i - 1] +
+         ratio *
+             (ricky.FlywheelPowerValues[i] -
+              ricky.FlywheelPowerValues[i - 1]); // return power based on ratio
 }
 
 void ManualFlywheelPID() {
   extern Robot_Telemetry ricky;
-
-  // int power = LocationBasedFlywheelPower(); // get flywheel power based on
-  // distance from goal
 
   if (Controller1.ButtonB.pressing()) { // spin up flywheel
     ricky.FlywheelTargetVelocity = 75;
@@ -34,7 +42,7 @@ void ManualFlywheelPID() {
   }
 
   if (Controller1.ButtonX.pressing()) { // spin up flywheel
-    ricky.FlywheelTargetVelocity = 100;
+    ricky.FlywheelTargetVelocity = LocationBasedFlywheelPower(); // 100;
   }
 
   if (Controller1.ButtonA.pressing()) { // spin down flywheel
@@ -60,7 +68,7 @@ void TriggerPulse(int pulses) { // trigger pulses
   // power based on
   // distance from
   // goal
-  ricky.DiskCount -= pulses;
+  // ricky.DiskCount -= pulses;
   if (pulses == 1) {
     Trigger.set(true);
     vex::task::sleep(750);

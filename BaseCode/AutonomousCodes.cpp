@@ -2,7 +2,7 @@
 #include "AuxiliaryFunctions\Flywheel.cpp"
 #include "AuxiliaryFunctions\Intake.cpp"
 #include "AuxiliaryFunctions\Roller.cpp"
-#include "AuxiliaryFunctions\Vision.cpp"
+//#include "AuxiliaryFunctions\Vision.cpp"
 #include "VectorEngine\Engine.cpp"
 #include "vex.h"
 
@@ -163,7 +163,7 @@ void AutonomousIndexer(double routine[][5], int length) {
     } else if (routine[i][0] == 4) { // trigger pulse x times
       printf("Trigger");
       if (routine[i][2] == 1) { // empty hopper
-        TriggerPulse(ricky.DiskCount);
+        TriggerPulse(5);
       } else {
         TriggerPulse(int(routine[i][1]));
       }
