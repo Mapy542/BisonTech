@@ -202,7 +202,8 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(bothrollers,
-                    bothrollers_length); // runs through the given routine
+  AutonomousIndexer(
+      leftdiskandrollerup,
+      leftdiskandrollerup_length); // runs through the given routine
   return 1;
 };
