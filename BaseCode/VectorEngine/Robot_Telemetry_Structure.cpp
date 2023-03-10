@@ -17,7 +17,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
   const float DistanceTolerance = 4; // mm
-  const float AngleTolerance = 1;    // degrees
+  const float AngleTolerance = 2;    // degrees
 
   const float StuckTolerance = 0.01; // mm/(1/3)s
 

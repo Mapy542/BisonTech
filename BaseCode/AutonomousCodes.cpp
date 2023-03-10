@@ -41,13 +41,13 @@ double bothrollers[][5] = {
     {0, -814, 255, 270, 0},   // set origin
     {1, -814, 220, 270, .7},  // touch against roller
     {6, 0, 180, 0, 0},        // spin roller
-    {1, -814, 250, 270, 0.5}, // pull away from roller
+    {1, -814, 250, 270, 0.7}, // pull away from roller
     //{1, -914, 250, 240, 0.7}, // spin
     //{7, -3090, 2500, 270, 0.7}, // goto next roller but stay inside lines
-    {1, -3100, 2300, 270, 0.7},
-    {1, -3100, 2300, 180, 0.5}, // shpinmove
-    {1, -3100, 2700, 180, 0.7},
-    {1, -3150, 2700, 180, 0.7}, //
+    {1, -3100, 2150, 270, 0.9},
+    {1, -3100, 2150, 180, 0.7}, // shpinmove
+    {1, -3070, 2790, 180, 0.7},
+    {1, -3190, 2790, 180, 0.7}, //
     {6, 0, 180, 0, 0}           // spin roller
 };
 const int bothrollers_length = sizeof(bothrollers) / sizeof(double) / 5;
@@ -202,7 +202,7 @@ void AutonomousIndexer(double routine[][5], int length) {
 
 int AutonomousRoutineDeamon() { // Main engine loop
   extern int test_route_length;
-  AutonomousIndexer(rightonlyshoot,
-                    rightonlyshoot_length); // runs through the given routine
+  AutonomousIndexer(bothrollers,
+                    bothrollers_length); // runs through the given routine
   return 1;
 };

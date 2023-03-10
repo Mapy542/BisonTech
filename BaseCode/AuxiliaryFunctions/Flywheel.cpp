@@ -6,8 +6,8 @@ int LocationBasedFlywheelPower() {
   float distanceX = fabs(ricky.GoalXPosition - ricky.CurrentXAxis);
   float distanceY = fabs(ricky.CurrentYAxis - ricky.GoalYPosition);
   float distanceD = sqrt(distanceX * distanceX + distanceY * distanceY) *
-                    1.25; // calculate distance from goal and add offset for
-                          // distance of goal above ground
+                    1.3; // calculate distance from goal and add offset for
+                         // distance of goal above ground
 
   int i = 0;
   while (distanceD < ricky.FlywheelPowerDistances[i] ||
