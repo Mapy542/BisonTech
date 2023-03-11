@@ -21,10 +21,10 @@ void ProximityRamp() { // ramp down to target speed based on distance to target
         fabs(ricky.TargetYAxis - ricky.CurrentYAxis)) +
        fabs(FromGyro(ricky.TargetTheta) * -3.14159265359 * 370 / 180.0)) *
       0.15; // find total distance to target
-  RampDown = (RampDown * RampDown) / 3000.0 +
-             0.1; // i have no idea how this works at this point. no matter
-                  // how i change it it doesn't improve ramp performance
-                  // just over shoots.
+  RampDown = (RampDown * RampDown) / 6000.0 +
+             0.07; // i have no idea how this works at this point. no matter
+                   // how i change it it doesn't improve ramp performance
+                   // just over shoots.
   if (RampDown > 1.0) { // if rampdown is greater than 1.0 then limit it to
                         // 1.0 to prevent overdrive;
     RampDown = 1.0;

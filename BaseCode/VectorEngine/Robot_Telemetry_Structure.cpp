@@ -17,7 +17,7 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   const double EncoderTicksPerMM = 0.6223678817; // mm per deg
 
   const float DistanceTolerance = 4; // mm
-  const float AngleTolerance = 1;    // degrees
+  const float AngleTolerance = 2;    // degrees
 
   const float StuckTolerance = 0.01; // mm/(1/3)s
 
@@ -95,17 +95,15 @@ struct Robot_Telemetry { // a java like class like thingy but just with
   int FlywheelLastError = 0;  // Used for PID control
   int FlywheelTotalError = 0; // Used for PID control
 
-  const float FlywheelMin = 0.4;        // flywheel min speed
-  const float FlywheelMax = 1.0;        // flywheel max speed
-  const int GoalXPosition = -18 * 25.4; // 18 inches
-  const int GoalYPosition = 122 * 25.4; // 10' 3"
-  const int MaximumFlywheelDistance =
-      140 * 25.4; //  12' 0" maximum possible distance from goal
-
+  const float FlywheelMin = 0.4;            // flywheel min speed
+  const float FlywheelMax = 1.0;            // flywheel max speed
+  const int GoalXPosition = -18 * 25.4;     // 18 inches
+  const int GoalYPosition = 122 * 25.4;     // 10' 3"
   const int LauncherAngleCompensation = 10; // 0 degrees
 
-  int DiskCount = 2;         // Used for tracking disk count
-  bool DiskInIntake = false; // Used for tracking disk count
+  const int FlywheelPowerDistances[8] = {0,    1219, 1531, 2179,
+                                         2743, 4328, 5372, 5768};
+  const int FlywheelPowerValues[8] = {0, 40, 50, 60, 70, 80, 90, 100};
 };
 
 #endif // end double define check

@@ -2,7 +2,7 @@
 #include "AuxiliaryFunctions\Flywheel.cpp"
 #include "AuxiliaryFunctions\Intake.cpp"
 #include "AuxiliaryFunctions\Roller.cpp"
-#include "AuxiliaryFunctions\Vision.cpp"
+//#include "AuxiliaryFunctions\Vision.cpp"
 #include "VectorEngine\Engine.cpp"
 #include "vex.h"
 
@@ -41,12 +41,13 @@ double bothrollers[][5] = {
     {0, -814, 255, 270, 0},   // set origin
     {1, -814, 220, 270, .7},  // touch against roller
     {6, 0, 180, 0, 0},        // spin roller
-    {1, -914, 250, 270, 0.5}, // pull away from roller
-    {1, -914, 250, 240, 0.7}, // spin
+    {1, -814, 250, 270, 0.7}, // pull away from roller
+    //{1, -914, 250, 240, 0.7}, // spin
     //{7, -3090, 2500, 270, 0.7}, // goto next roller but stay inside lines
-    {1, -3090, 2400, 240, 0.7},
-    {1, -3090, 2400, 180, 0.5}, // shpinmove
-    {1, -3210, 2700, 180, 0.7}, //
+    {1, -3100, 2150, 270, 0.9},
+    {1, -3100, 2150, 180, 0.7}, // shpinmove
+    {1, -3070, 2790, 180, 0.7},
+    {1, -3190, 2790, 180, 0.7}, //
     {6, 0, 180, 0, 0}           // spin roller
 };
 const int bothrollers_length = sizeof(bothrollers) / sizeof(double) / 5;
@@ -67,6 +68,55 @@ double skills[][5] = {
 
 };
 const int skills_length = sizeof(skills) / sizeof(double) / 5;
+
+double rightonlyshoot[][5] = {{0, -3442.6, 814, 180, 0},
+                              {1, -3350, 814, 209, 0.7},
+                              {3, 76, 0, 0, 0},
+                              {4, 2, 0, 0, 0},
+                              {3, 0, 0, 0, 0}};
+const int rightonlyshoot_length = sizeof(rightonlyshoot) / sizeof(double) / 5;
+
+/*double FlywheelTest[][5] = {
+    {2, 100, 0, 0, 0}, // start intake
+    {3, 40, 0, 0, 0},  // spinup flywheel
+    {5, 5, 0, 0, 0},   // wait for stabilization
+    {4, 2, 0, 0, 0},   // shoot two disks
+    {5, 10, 0, 0, 0},  // wait for data collection
+
+    {3, 50, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 60, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 70, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 80, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 90, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},  // wait for stabilization
+    {4, 2, 0, 0, 0},  // shoot two disks
+    {5, 10, 0, 0, 0}, // wait for data collection
+
+    {3, 100, 0, 0, 0}, // spinup flywheel
+    {5, 5, 0, 0, 0},   // wait for stabilization
+    {4, 2, 0, 0, 0},   // shoot two disks
+    {5, 10, 0, 0, 0},  // wait for data collection
+
+    {3, 0, 0, 0, 0}, // stop flywheel
+    {2, 0, 0, 0, 0}  // stop intake
+};
+const int FlywheelTest_length = sizeof(FlywheelTest) / sizeof(double) / 5;*/
 
 void AutonomousIndexer(double routine[][5], int length) {
   extern Robot_Telemetry ricky;
@@ -113,7 +163,7 @@ void AutonomousIndexer(double routine[][5], int length) {
     } else if (routine[i][0] == 4) { // trigger pulse x times
       printf("Trigger");
       if (routine[i][2] == 1) { // empty hopper
-        TriggerPulse(ricky.DiskCount);
+        TriggerPulse(5);
       } else {
         TriggerPulse(int(routine[i][1]));
       }

@@ -79,10 +79,10 @@ int ondriver_drivercontrol_0() {
 // Initalization
 int whenStarted1() {
   Gyroscope.startCalibration();
-  FL.setStopping(coast);
-  RL.setStopping(coast);
-  FR.setStopping(coast);
-  RR.setStopping(coast);
+  FL.setStopping(brake);
+  RL.setStopping(brake);
+  FR.setStopping(brake);
+  RR.setStopping(brake);
   RL.setMaxTorque(75.0, percent);
   FR.setMaxTorque(75.0, percent);
   FL.setMaxTorque(100.0, percent);

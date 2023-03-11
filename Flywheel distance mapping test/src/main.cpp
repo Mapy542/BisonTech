@@ -20,7 +20,7 @@ int onauton_autonomous_0() {
   vex::task Vector_Engine(Engine);
   vex::task::sleep(100);
   vex::task FlywheelControl(FlywheelPID);
-  //vex::task DiskDetector(VisionDeamon);
+  vex::task DiskDetector(VisionDeamon);
   vex::task Stucky(Preliminary_Lock_Detect);
 
  while(true){
@@ -40,7 +40,7 @@ int onauton_autonomous_0() {
       Autonoma.stop();
       Vector_Engine.stop();
       FlywheelControl.stop();
-      //DiskDetector.stop();
+      DiskDetector.stop();
       Stucky.stop();
     }
     vex::task::sleep(50);
@@ -50,7 +50,7 @@ return 0;
 
 // Driver Control
 int ondriver_drivercontrol_0() {
-  //onauton_autonomous_0();
+  onauton_autonomous_0();
   Brain.resetTimer();
     while (Gyroscope
              .isCalibrating()) { // REALLY IMPORTANT TO CALIBRATE BEFORE MOVING
@@ -61,7 +61,7 @@ int ondriver_drivercontrol_0() {
   //ricky.CurrentXAxis = 230;
   //ricky.CurrentYAxis = 220;
   vex::task Engine(DriverSupplementEngine);
-  //vex::task DiskDetector(VisionDeamon);
+  vex::task DiskDetector(VisionDeamon);
   while (true) {
     ManualDriveTrainControl();
     ManualIntake();
